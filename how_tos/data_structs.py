@@ -12,10 +12,10 @@ sum()  # sum (for numbers only)
 users = ["alice", "bob"]
 users.append("charlie") # add item to end
 users.sort()            # sort in place
-users.remove("bob")     # removes 1st occurrence
-users.reverse()
+users.remove("bob")     # removes 1st occurrence of value
+users.reverse()         # reverses the list
 users.clear()           # remove all items
-users.pop([i])          # removes & returns item
+users.pop([i])          # removes & returns item at specified index
 
 # set - unordered, no duplicates
 active = {"alice", "bob"}

@@ -16,9 +16,11 @@ def rsa_encrypt(message):
 
     encrypted_message = cipher.encrypt(message.encode())
 
+    # jot down private key
     with open("private_k.pem", 'wb') as file:
         file.write(private_key)
 
+    # jot down public key
     with open("public_k.pem", 'wb') as file:
         file.write(public_key)
 
