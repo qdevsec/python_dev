@@ -1,11 +1,15 @@
 import re
 import pandas as pd
 
+log_pattern = r'(?P<ip>\d+\.\d+\.\d+\.\d+).*?\[(?P<time>.*?) \+0000\].*?\" (?P<status>\d+)'
+log_pattern2 = r'401'
+pattern = r''
+
+
 def parse_and_detect(logfile, threshold=10):
     # This Regex matches: IP, Timestamp, and Status Code
     # Example: 10.0.0.99 - - [23/Mar/2026:20:50:45 +0000] "POST /login..." 401
-    log_pattern = r'(?P<ip>\d+\.\d+\.\d+\.\d+).*?\[(?P<time>.*?) \+0000\].*?\" (?P<status>\d+)'
-    log_pattern2 = r'401'
+
     
     data = []
     

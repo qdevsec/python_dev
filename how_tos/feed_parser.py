@@ -118,8 +118,8 @@ def get_ips_blocked(choice):
     
     # parse lines
     for line in lines:
-        if line.startswith('#') or not line:
-            continue
+        if line.startswith('#') or not line: # execute if 1st part is true or line == False
+            continue # end iteration, start next
         
         parts = line.split(",")
         print({choice})
