@@ -1,8 +1,9 @@
+import os
+import base64
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
-from Crypto.Random import get_random_bytes
-import base64
-
+# from Crypto.Random import get_random_bytes
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 # To-Dos
 # finish aes, xor, ceasar encryption functions
@@ -28,8 +29,35 @@ def rsa_encrypt(message):
 
     return encrypted_message
 
-def aes_encrypt():
-    pass
+def aes_encrypt(key: bytes, plaintext: bytes) -> dict:
+    # 16 bytes -> aes-128
+    # 24 bytes -> aes-a92
+    # 32 bytes -> aes-256 
+
+    """
+    Encrypt plaintext using AES-GCM
+    
+    args: 
+    - key (bytes): 32-byte key (AES-256)
+    - plaintext (bytes): data to encrypt
+    
+    Returns: dict containing nonce and ciphertext
+    """
+    if len(key) != 32: # require strongest key
+        raise ValueError("Key must be 32 bytes for AES-256")
+    
+    # generate random 12-byte nonce (number used once) (recommended for GCM)
+    nonce = os.urandom(12)
+
+    aesgcm = AESGCM(key)
+
+    # encrypt (no associated data for now)
+    ciphertext = aesgcm.encrypt(nonce, plaintext, None)
+
+    return {
+        "nonce": nonce,
+        "ciphertext": ciphertext
+    }
 
 def xor_encrypt():
     pass

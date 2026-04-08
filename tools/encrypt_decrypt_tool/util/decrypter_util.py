@@ -1,6 +1,7 @@
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.padding import PKCS7
 from cryptography.hazmat.backends import default_backend
 
@@ -32,6 +33,11 @@ returns plaintext as bytes
 # Convert bytes to string (if text)
 # print("Decrypted:", plaintext.decode())
 
+def aes_decryption(key: bytes, nonce: bytes, ciphertext: bytes) -> bytes:
+    aesgcm = AESGCM(key)
+    return aesgcm.decrypt(nonce, ciphertext, None)
+
+# deprecated
 def aes_decrypt(ciphertext, key, iv):
     cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
     decryptor = cipher.decryptor()
