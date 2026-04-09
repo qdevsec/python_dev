@@ -38,16 +38,16 @@ def aes_decryption(key: bytes, nonce: bytes, ciphertext: bytes) -> bytes:
     return aesgcm.decrypt(nonce, ciphertext, None)
 
 # deprecated
-def aes_decrypt(ciphertext, key, iv):
-    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
-    decryptor = cipher.decryptor()
+# def aes_decrypt(ciphertext, key, iv):
+#     cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
+#     decryptor = cipher.decryptor()
 
-    padded_data = decryptor.update(ciphertext) + decryptor.finalize()
+#     padded_data = decryptor.update(ciphertext) + decryptor.finalize()
 
-    unpadder = PKCS7(128).unpadder()
-    data = unpadder.update(padded_data) + unpadder.finalize()
+#     unpadder = PKCS7(128).unpadder()
+#     data = unpadder.update(padded_data) + unpadder.finalize()
 
-    return data
+    # return data
 
 def xor_decrypt(data, key):
     return bytes([b ^ key for b in data])
@@ -62,7 +62,22 @@ def xor_decrypt(data, key):
 # decrypted_message = rsa_decrypt(encrypted_message, private_key_data)
 # print(decrypted_message.decode())
 
+
+def decrypt_rsa(cipher: list, private_key: tuple):
+
+    # debug
+    # print(f"{type(cipher)}: {cipher}")
+    # print(f"{type(private_key)}: {private_key}")
+    d, n = private_key
+
+    # pow(base, exp, mod) same as (base ** exp) % mod
+    decrypted_bytes = [pow(byte, d, n) for byte in cipher]
+    message = bytes(decrypted_bytes).decode('utf-8')
+    print(message)
+
 """
+## deprecated
+
 decrypts rsa-encrypted ciphertext using a private key in PEM format
 ciphertext parameter: encrypted message as bytes
 private_key_pem parameter: the private key in PEM format as bytes
@@ -125,38 +140,36 @@ def caesar_decrypt(text, shift):
     
     return result
 
-
+# deprecated moved to main.py
 # select right decryption function based on user input
-def decryption_selector():
+# def decryption_selector():
 
-    decrypted = ""
+#     decrypted = ""
 
-    choice = input("👋 What ciphertext do you want to decrypt? [rsa, aes, caesar, xor] ")
-    if choice == "rsa": 
-        ciphertext, pemkey, password = input("Provide rsa options? ciphertext pemkey password(optional, type None if no pass) ").split()
-        decrypted = rsa_decrypt(ciphertext, pemkey, password)
+#     choice = input("👋 What ciphertext do you want to decrypt? [rsa, aes, caesar, xor] ")
+#     if choice == "rsa": 
+#         ciphertext, pemkey, password = input("Provide rsa options? ciphertext pemkey password(optional, type None if no pass) ").split()
+#         decrypted = rsa_decrypt(ciphertext, pemkey, password)
     
-    elif choice == "aes":
-        ciphertext, key, iv = input("provide aes options: ciphertext key iv ").split()
-        decrypted = aes_decrypt(ciphertext, key, iv)
+#     elif choice == "aes":
+#         ciphertext, key, iv = input("provide aes options: ciphertext key iv ").split()
+#         decrypted = aes_decrypt(ciphertext, key, iv)
 
-    elif choice == "xor":
-        data, key = input("provide xor options: data key ").split()
-        decrypted = xor_decrypt(data, key)
+#     elif choice == "xor":
+#         data, key = input("provide xor options: data key ").split()
+#         decrypted = xor_decrypt(data, key)
 
-    elif choice == "caesar":
-        text, shift = input("provide caesar options, text shift: ").split()
-        decrypted = caesar_decrypt(text, int(shift))
+#     elif choice == "caesar":
+#         text, shift = input("provide caesar options, text shift: ").split()
+#         decrypted = caesar_decrypt(text, int(shift))
 
-    # caesar is the only non byte returned result, adding this
-    print(decrypted) if choice == "caesar" else print(f"here : {decrypted.decode()}")
+#     # caesar is the only non byte returned result, adding this
+#     print(decrypted) if choice == "caesar" else print(f"here : {decrypted.decode()}")
     
-    answer = input("Would you like to decrypt again? ")
-    start_program() if answer == "y" else print("bye")
+#     answer = input("Would you like to decrypt again? ")
+#     start_program() if answer == "y" else print("bye")
 
     
-def start_program():
-    decryption_selector()
+# def start_program():
+#     decryption_selector()
 
-## Begin
-start_program()
