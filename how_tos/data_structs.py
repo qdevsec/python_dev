@@ -33,8 +33,8 @@ active.clear()        # empty set
 # difference() or -   <-- subtract
 
 # dict - key-value pairs
-scores = {"alice": 10}
-scores["bob"] = 20
+scores = {"alice": 10}   # add key, value pair
+scores["bob"] = 20       # access value with a key
 # if key exists, returns value, if it doesnt returns default (None)
 scores.items()          # key-value pairs
 scores.keys()           # all keys

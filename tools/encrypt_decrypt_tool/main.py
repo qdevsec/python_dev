@@ -16,7 +16,9 @@ def selector(answer):
             retry()
 
         if response == 'aes':
-            aes_encrypt()
+            message = input("Please provide the message you want to encrypt: ")
+            # format_message = 'b' + message + "'"
+            aes_encrypt(message)
             retry()
 
         if response == 'rsa':
@@ -39,7 +41,11 @@ def selector(answer):
             retry()
 
         if response == 'aes':
-            aes_decryption()
+            ciphertext = input("Ciphertext: ")
+            key = input("key: ")
+            nonce = input("nonce: ")
+            tag = input("tag: ")
+            aes_decryption(ciphertext, key, nonce, tag)
             retry()
 
         if response == 'xor':

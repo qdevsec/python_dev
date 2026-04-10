@@ -1,9 +1,10 @@
 import os
 import random
+import base64
 from sympy import isprime, mod_inverse
 from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_OAEP
-# from Crypto.Random import get_random_bytes
+from Crypto.Random import get_random_bytes
+from Crypto.Cipher import PKCS1_OAEP, AES
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 # To-Dos
@@ -59,57 +60,43 @@ def rsa_encrypt(message):
     message_bytes = message.encode('utf-8')
     cipher = [pow(byte, e, n) for byte in message_bytes]
     print("Encrypted: ", cipher)
-    # return cipher
+    
 
-    # key = RSA.generate(bits=2048)
-    # private_key = key.export_key()
-    # public_key = key.public_key().export_key()
-
-    # cipher = PKCS1_OAEP.new(public_key)
-
-    # encrypted_message = cipher.encrypt(message)
-
-    # # jot down private key
-    # with open("private_k.pem", 'wb') as file:
-    #     file.write(private_key)
-
-    # # jot down public key
-    # with open("public_k.pem", 'wb') as file:
-    #     file.write(public_key)
-
-    # print("don't forget your keys, located in the same folder")
-
-    # return encrypted_message
-
-def aes_encrypt(key: bytes, plaintext: bytes) -> dict:
+def aes_encrypt(plaintext: str) -> dict:
     # 16 bytes -> aes-128
-    # 24 bytes -> aes-a92
+    # 24 bytes -> aes-192
     # 32 bytes -> aes-256 
 
     """
     Encrypt plaintext using AES-GCM
     
     args: 
-    - key (bytes): 32-byte key (AES-256)
-    - plaintext (bytes): data to encrypt
+    - key (bytes): 32-byte key (AES-256) <-- generated in the function
+    - plaintext (bytes): Secret message
     
     Returns: dict containing nonce and ciphertext
     """
-    if len(key) != 32: # require strongest key
-        raise ValueError("Key must be 32 bytes for AES-256")
-    
-    # generate random 12-byte nonce (number used once) (recommended for GCM)
-    nonce = os.urandom(12)
 
-    aesgcm = AESGCM(key)
+    # generate secure key
+    key = get_random_bytes(32) # AES-256
 
-    # encrypt (no associated data for now)
-    ciphertext = aesgcm.encrypt(nonce, plaintext, None)
+    print(plaintext)
 
-    return {
-        "nonce": nonce,
-        "ciphertext": ciphertext
+    message_bytes = plaintext.encode("utf-8") # need to convert plaintext to bytes
+
+    cipher = AES.new(key, AES.MODE_GCM)
+    ciphertext, tag = cipher.encrypt_and_digest(message_bytes)
+
+
+    res_dict = {
+        "ciphertext": base64.b64encode(ciphertext).decode(),
+        "key": base64.b64encode(key).decode(),
+        "nonce": base64.b64encode(cipher.nonce).decode(),
+        "tag": base64.b64encode(tag).decode()
     }
+
+    for key, value in res_dict.items():
+        print(f"{key}, Value: {value}")
 
 def xor_encrypt():
     pass

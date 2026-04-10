@@ -4,6 +4,9 @@ from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.padding import PKCS7
 from cryptography.hazmat.backends import default_backend
+from Crypto.Cipher import AES
+import base64
+
 
 ####
 # results is usually in bytes
@@ -33,9 +36,21 @@ returns plaintext as bytes
 # Convert bytes to string (if text)
 # print("Decrypted:", plaintext.decode())
 
-def aes_decryption(key: bytes, nonce: bytes, ciphertext: bytes) -> bytes:
-    aesgcm = AESGCM(key)
-    return aesgcm.decrypt(nonce, ciphertext, None)
+def aes_decryption(ciphertext: bytes, key: bytes, nonce: bytes, tag: bytes) -> bytes:
+    
+    # debug
+    # print(f"{type(ciphertext)} {type(key)} {type(nonce)} {type(tag)}")
+    
+    d_ciphertext = base64.b64decode(ciphertext)
+    d_key = base64.b64decode(key)
+    d_nonce = base64.b64decode(nonce)
+    d_tag = base64.b64decode(tag)
+
+    # debug
+    print(f"{type(d_ciphertext)} {type(d_key)} {type(d_nonce)} {type(d_tag)}")
+
+    cipher = AES.new(d_key, AES.MODE_GCM, nonce=d_nonce)
+    print(cipher.decrypt_and_verify(d_ciphertext, d_tag))
 
 # deprecated
 # def aes_decrypt(ciphertext, key, iv):
