@@ -126,7 +126,7 @@ def rsa_decrypt(ciphertext: bytes, private_key_pem: bytes, password = None) -> b
 def caesar_decrypt(text, shift):
     result = ""
 
-    print(f"Debug: {text} {shift}")
+    # print(f"Debug: {text} {shift}")
 
     for char in text:
         # acts as filter, caesar only shift letters, if you
@@ -153,7 +153,7 @@ def caesar_decrypt(text, shift):
             # Leaves spaces and punctuation as they are
             result += char
 
-        print(f"Debug: {result}")
+    print(result)
 
     
     return result

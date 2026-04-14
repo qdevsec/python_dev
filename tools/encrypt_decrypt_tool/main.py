@@ -28,7 +28,9 @@ def selector(answer):
             retry()
 
         if response == 'caesar':
-            caesar_encrypt()
+            text = input("Please provide the message you want to encrypt: ")
+            shift = input("Please provide the shift right number: ")
+            caesar_encrypt(text, int(shift))
             retry()
 
     # Decryption
@@ -57,7 +59,9 @@ def selector(answer):
             retry()
 
         if response == 'caesar':
-            caesar_decrypt()
+            text = input("Please provide the message you want to decrypt: ")
+            shift = input("Please provide the shift left number: ")
+            caesar_decrypt(text, int(shift))
             retry()
 
 def retry():

@@ -143,36 +143,62 @@ def xor_encrypt(text: str, key: str) -> str:
     encrypted = xor_bytes(text.encode(), key.encode())
     print(base64.b64encode(encrypted).decode())
 
-def caesar_encrypt():
-    pass
+
+"""
+usage example
+
+message = "Hello, World!"
+shift = 3
+
+caesar_encrypt(message, 3)
+"""
+def caesar_encrypt(text, shift):
+    result = ""
+    # loop through the characters in text
+    for c in text:
+        
+        # check if character is a letter, only shifting letters
+        if c.isalpha():
+            # determine if uppercase or lowercase ord() converts letters to ascii, chr() converts back to char
+            base = ord('A') if c.isupper() else ord('a')
+
+            # Shift character and wrap around alphabet
+            shifted = (ord(c) - base + shift) % 26 + base
+            result += chr(shifted)
+        else:
+            # this else is for non alphabet characters
+            result += c
+
+    print(result)
+    
 
 # deprecated moved to main.py
 # # select right encryption function based on user input
-def encryption_selector():
+# def encryption_selector():
 
-    encrypted = ""
+#     encrypted = ""
 
-    choice = input("👋 What ciphertext do you want to encrypt? [rsa, aes, caesar, xor] ")
-    if choice == "rsa": 
-        message = input("Provide message: ") 
-        encrypted = rsa_encrypt(message)
+#     choice = input("👋 What ciphertext do you want to encrypt? [rsa, aes, caesar, xor] ")
+#     if choice == "rsa": 
+#         message = input("Provide message: ") 
+#         encrypted = rsa_encrypt(message)
     
-    elif choice == "aes":
-        ciphertext, key, iv = input("provide aes options: ciphertext key iv ").split()
-        encrypted = aes_encrypt(ciphertext, key, iv)
+#     elif choice == "aes":
+#         ciphertext, key, iv = input("provide aes options: ciphertext key iv ").split()
+#         encrypted = aes_encrypt(ciphertext, key, iv)
 
-    elif choice == "xor":
-        data, key = input("provide xor options: data key ").split()
-        encrypted = xor_encrypt(data, key)
+#     elif choice == "xor":
+#         data, key = input("provide xor options: data key ").split()
+#         encrypted = xor_encrypt(data, key)
 
-    elif choice == "caesar":
-        text, shift = input("provide caesar options, text shift: ").split()
-        encrypted = caesar_encrypt(text, int(shift))
-
-    
-    answer = input("Would you like to encrypt again? ")
-    start_program() if answer == "y" else print("bye")
+#     elif choice == "caesar":
+#         text, shift = input("provide caesar options, text shift: ").split()
+#         encrypted = caesar_encrypt(text, int(shift))
 
     
-def start_program():
-    encryption_selector()
+#     answer = input("Would you like to encrypt again? ")
+#     start_program() if answer == "y" else print("bye")
+
+    
+# def start_program():
+#     encryption_selector()
