@@ -12,6 +12,36 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 ##### Helper functions
 
+#--- xor encryption helper---#
+
+# works on bytes not strings
+# data: the input (plaintext or ciphertext) as bytes (the encrypt and decrypt xor functions use this)
+# key: the encryption key, also bytes
+# returns new bytes after XOR operation
+def xor_bytes(data: bytes, key: bytes) -> bytes:
+
+    """
+    # enumerate loops over each byte in data, gives 
+    #   i -> index(0, 1, 2, ...)
+    #   b -> the actual byte value
+
+    Example:
+    data = b"ABC"
+    enumerate -> (0, 65), (1, 66), (2, 67)  
+
+    key[i % len(key)] <-- repeat the key if it's shorter than the data
+
+    Example:
+    key = b"XY   # length = 2
+
+    i=0 -> key[0 % 2] = key[0]
+    i=1 -> key[1 % 2] = key[1]
+
+    b ^ key[...] <- XORs the current data byte with corresponding key byte
+    bytes() wraps around logic to covert list of XORed byte values into a bytes object
+    """
+    return bytes([b ^ key[i % len(key)] for i, b in enumerate(data)])
+
 #---- function to generate a random prime ----#
 # for better security primes should be 1024 - 4096
 def generate_prime(start=100, end=300):
@@ -49,6 +79,7 @@ def generate_keys():
 
     return public_key, private_key
 
+# asymmetric
 def rsa_encrypt(message):
 
     # generate keys
@@ -61,7 +92,7 @@ def rsa_encrypt(message):
     cipher = [pow(byte, e, n) for byte in message_bytes]
     print("Encrypted: ", cipher)
     
-
+# symmetric
 def aes_encrypt(plaintext: str) -> dict:
     # 16 bytes -> aes-128
     # 24 bytes -> aes-192
@@ -98,8 +129,19 @@ def aes_encrypt(plaintext: str) -> dict:
     for key, value in res_dict.items():
         print(f"{key}, Value: {value}")
 
-def xor_encrypt():
-    pass
+
+# symmetric
+"""
+usage example
+
+text = "Hello, World!"
+key = "secret"
+"""
+def xor_encrypt(text: str, key: str) -> str:
+    
+    # converts text, key to bytes passes it to xor_bytes helper
+    encrypted = xor_bytes(text.encode(), key.encode())
+    print(base64.b64encode(encrypted).decode())
 
 def caesar_encrypt():
     pass

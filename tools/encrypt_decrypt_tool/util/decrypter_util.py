@@ -1,3 +1,4 @@
+from util.encrypter_util import xor_bytes
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
@@ -64,8 +65,10 @@ def aes_decryption(ciphertext: bytes, key: bytes, nonce: bytes, tag: bytes) -> b
 
     # return data
 
-def xor_decrypt(data, key):
-    return bytes([b ^ key for b in data])
+def xor_decrypt(encoded_text: str, key: str) -> str:
+    encrypted = base64.b64decode(encoded_text.encode())
+    decrypted = xor_bytes(encrypted, key.encode())
+    print(decrypted.decode())
 
 #------------------ Example Usage -------------------
 # you would load your private key from a .pem file

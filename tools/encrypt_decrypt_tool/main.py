@@ -21,8 +21,10 @@ def selector(answer):
             aes_encrypt(message)
             retry()
 
-        if response == 'rsa':
-            xor_encrypt()
+        if response == 'xor':
+            message = input("Please provide the message you want to encrypt: ")
+            key = input("Please provide the key: ")
+            xor_encrypt(message, key)
             retry()
 
         if response == 'caesar':
@@ -49,7 +51,9 @@ def selector(answer):
             retry()
 
         if response == 'xor':
-            xor_decrypt()
+            message = input("Please provide the message you want to decrypt: ")
+            key = input("Please provide the key: ")
+            xor_decrypt(message, key)
             retry()
 
         if response == 'caesar':
