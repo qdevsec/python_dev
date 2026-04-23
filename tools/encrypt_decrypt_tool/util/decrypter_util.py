@@ -53,6 +53,8 @@ def aes_decryption(ciphertext: bytes, key: bytes, nonce: bytes, tag: bytes) -> b
     cipher = AES.new(d_key, AES.MODE_GCM, nonce=d_nonce)
     print(cipher.decrypt_and_verify(d_ciphertext, d_tag))
 
+    return cipher.decrypt_and_verify(d_ciphertext, d_tag)
+
 # deprecated
 # def aes_decrypt(ciphertext, key, iv):
 #     cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
@@ -69,6 +71,8 @@ def xor_decrypt(encoded_text: str, key: str) -> str:
     encrypted = base64.b64decode(encoded_text.encode())
     decrypted = xor_bytes(encrypted, key.encode())
     print(decrypted.decode())
+
+    return decrypted.decode()
 
 #------------------ Example Usage -------------------
 # you would load your private key from a .pem file
@@ -92,6 +96,7 @@ def decrypt_rsa(cipher: list, private_key: tuple):
     decrypted_bytes = [pow(byte, d, n) for byte in cipher]
     message = bytes(decrypted_bytes).decode('utf-8')
     print(message)
+    return message
 
 """
 ## deprecated
@@ -119,6 +124,7 @@ def rsa_decrypt(ciphertext: bytes, private_key_pem: bytes, password = None) -> b
     )
 
     return plaintext
+
 
 ## caesar cipher decryption (text-based)
 # print(caesar_decrypt("Khoor", 3)) --> should result in Hello

@@ -91,6 +91,8 @@ def rsa_encrypt(message):
     message_bytes = message.encode('utf-8')
     cipher = [pow(byte, e, n) for byte in message_bytes]
     print("Encrypted: ", cipher)
+
+    return cipher
     
 # symmetric
 def aes_encrypt(plaintext: str) -> dict:
@@ -129,6 +131,7 @@ def aes_encrypt(plaintext: str) -> dict:
     for key, value in res_dict.items():
         print(f"{key}, Value: {value}")
 
+    return res_dict
 
 # symmetric
 """
@@ -142,6 +145,8 @@ def xor_encrypt(text: str, key: str) -> str:
     # converts text, key to bytes passes it to xor_bytes helper
     encrypted = xor_bytes(text.encode(), key.encode())
     print(base64.b64encode(encrypted).decode())
+
+    return base64.b64encode(encrypted).decode()
 
 
 """
@@ -170,7 +175,7 @@ def caesar_encrypt(text, shift):
             result += c
 
     print(result)
-    
+    return result
 
 # deprecated moved to main.py
 # # select right encryption function based on user input
