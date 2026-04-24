@@ -77,8 +77,26 @@ root.title("Crypto Tool")
 
 # Input
 tk.Label(root, text="Input").pack()
-input_box = tk.Text(root, height=5, width=50)
+input_box = tk.Text(root, height=5, width=60)
 input_box.pack()
+
+# Instruction text area
+# height is lines, width is characters
+ins_text_area = tk.Text(root, height=16, width=70, wrap="word")
+ins_text_area.insert(1.0, "Usage: \n" \
+                          "RSA encrypt: paste message to be encrypted in input box \n" \
+                          "RSA decrypt: provide cipher [list], provide cipher [tuple] \n" \
+                          "------ \n"\
+                          "AES encrypt: paste message to be encrypted in input box \n" \
+                          "AES decrypt: paste info separated by space example: ciphertext key nonce tag \n" \
+                          "------ \n" \
+                          "XOR encrypt: paste message and key: 'Hello, world' 'secret' \n" \
+                          "XOR decrypt: paste info separated by space example: '<encrypted>' '<key>' \n" \
+                          "------ \n" \
+                          "caesar encrypt: paste message in the input box: '<message>' 'shift right #' \n" \
+                          "caesar decrypt: provide message and shift left #")
+ins_text_area.config(state="disabled") # read-only
+ins_text_area.pack()
 
 # Select algo, defaults to aes
 algo_var = tk.StringVar(value="AES")
