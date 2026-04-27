@@ -113,7 +113,9 @@ def aes_encrypt(plaintext: str) -> dict:
     # generate secure key
     key = get_random_bytes(32) # AES-256
 
-    print(plaintext)
+    print(f"Orginal: {plaintext}")
+    print("\n")
+
 
     message_bytes = plaintext.encode("utf-8") # need to convert plaintext to bytes
 
