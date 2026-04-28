@@ -109,11 +109,19 @@ def submit():
     config = REGISTRY_ALGORITHMS[algo][operation]
     func = config["func"]
 
+    print(f"Debug: algo: {algo} operation: {operation} config: {config} func: {func}")
+
     kwargs = {k: e.get().strip() for k, e in entries.items()}
 
     try:
         result = func(**kwargs)
+
+        # check the returned data type so dictionaries can be parsed
+        if isinstance(result, dict):
+            result = "\n".join(f"{k}: {v}" for k, v in result.items())
+
     except Exception as e:
+        print("Seems like an error exception...")
         result = f"Error: {e}"
     
     output_box.delete("1.0", tk.END)
@@ -128,7 +136,7 @@ entries = {}
 
 # Input
 tk.Label(root, text="Input").pack()
-input_box = tk.Text(root, height=5, width=60)
+input_box = tk.Text(root, height=5, width=70)
 input_box.pack()
 
 # Instruction text area
@@ -173,7 +181,7 @@ param_frame.pack(pady=10)
 
 # Output
 tk.Label(root, text="Output").pack()
-output_box = tk.Text(root, height=5, width=50)
+output_box = tk.Text(root, height=5, width=70)
 output_box.pack()
 
 # Dropdown

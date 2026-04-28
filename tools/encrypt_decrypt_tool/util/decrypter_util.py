@@ -37,7 +37,7 @@ returns plaintext as bytes
 # Convert bytes to string (if text)
 # print("Decrypted:", plaintext.decode())
 
-def aes_decryption(ciphertext: bytes, key: bytes, nonce: bytes, tag: bytes) -> bytes:
+def aes_decryption(ciphertext: bytes, key: bytes, nonce: bytes, tag: bytes) -> str:
     
     # debug
     # print(f"{type(ciphertext)} {type(key)} {type(nonce)} {type(tag)}")
@@ -48,12 +48,16 @@ def aes_decryption(ciphertext: bytes, key: bytes, nonce: bytes, tag: bytes) -> b
     d_tag = base64.b64decode(tag)
 
     # debug
-    print(f"{type(d_ciphertext)} {type(d_key)} {type(d_nonce)} {type(d_tag)}")
+    # print(f"{type(d_ciphertext)} {type(d_key)} {type(d_nonce)} {type(d_tag)}")
 
     cipher = AES.new(d_key, AES.MODE_GCM, nonce=d_nonce)
-    print(cipher.decrypt_and_verify(d_ciphertext, d_tag))
+    # print(cipher.decrypt_and_verify(d_ciphertext, d_tag).decode('utf-8'))
 
-    return cipher.decrypt_and_verify(d_ciphertext, d_tag)
+    res = cipher.decrypt_and_verify(d_ciphertext, d_tag).decode('utf-8')
+
+    print(res)
+
+    return res
 
 # deprecated
 # def aes_decrypt(ciphertext, key, iv):

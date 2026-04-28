@@ -132,6 +132,7 @@ def aes_encrypt(plaintext: str) -> dict:
 
     for key, value in res_dict.items():
         print(f"{key}, Value: {value}")
+        # print("------ \n")
 
     return res_dict
 
