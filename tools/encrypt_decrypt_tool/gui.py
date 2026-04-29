@@ -30,7 +30,7 @@ REGISTRY_ALGORITHMS = {
     "XOR": {
         "encrypt": {
             "func": xor_encrypt,
-            "params": ["data", "key"]
+            "params": ["text", "key"]
         },
         "decrypt": {
             "func": xor_decrypt,
@@ -109,7 +109,7 @@ def submit():
     config = REGISTRY_ALGORITHMS[algo][operation]
     func = config["func"]
 
-    print(f"Debug: algo: {algo} operation: {operation} config: {config} func: {func}")
+    # print(f"Debug: algo: {algo} operation: {operation} config: {config} func: {func}")
 
     kwargs = {k: e.get().strip() for k, e in entries.items()}
 
