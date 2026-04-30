@@ -113,6 +113,8 @@ def submit():
 
     kwargs = {k: e.get().strip() for k, e in entries.items()}
 
+    print(f"kwargs: {kwargs}")
+
     try:
         result = func(**kwargs)
 

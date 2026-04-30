@@ -89,10 +89,15 @@ def rsa_encrypt(message):
     e, n = pub
 
     message_bytes = message.encode('utf-8')
+    print(f"Debug: Message bytes: {message_bytes}")
     cipher = [pow(byte, e, n) for byte in message_bytes]
     print("Encrypted: ", cipher)
 
-    return cipher
+    res = {"cipher": cipher, "private_key": priv}
+
+    print(f"Debug: cipher & private-key: {res}")
+
+    return res
     
 # symmetric
 def aes_encrypt(plaintext: str) -> dict:

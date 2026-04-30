@@ -7,7 +7,7 @@ from cryptography.hazmat.primitives.padding import PKCS7
 from cryptography.hazmat.backends import default_backend
 from Crypto.Cipher import AES
 import base64
-
+import ast
 
 ####
 # results is usually in bytes
@@ -90,14 +90,20 @@ def xor_decrypt(encoded_text: str, key: str) -> str:
 
 
 def decrypt_rsa(cipher: list, private_key: tuple):
+    print("....starting rsa decrypt.....")
+    
 
-    # debug
-    # print(f"{type(cipher)}: {cipher}")
-    # print(f"{type(private_key)}: {private_key}")
-    d, n = private_key
+    t_priv_key = ast.literal_eval(private_key)
+    # print(f"{type(t_priv_key)}: {t_priv_key}")
+
+    d, n = t_priv_key
+
+    list_cipher = ast.literal_eval(cipher)
+
+    print(f"Debug: list cipher: {list_cipher}")
 
     # pow(base, exp, mod) same as (base ** exp) % mod
-    decrypted_bytes = [pow(byte, d, n) for byte in cipher]
+    decrypted_bytes = [pow(byte, d, n) for byte in list_cipher]
     message = bytes(decrypted_bytes).decode('utf-8')
     print(message)
     return message
