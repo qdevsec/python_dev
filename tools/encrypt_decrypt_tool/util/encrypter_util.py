@@ -176,7 +176,7 @@ def caesar_encrypt(text, shift):
             base = ord('A') if c.isupper() else ord('a')
 
             # Shift character and wrap around alphabet
-            shifted = (ord(c) - base + shift) % 26 + base
+            shifted = (ord(c) - base + int(shift)) % 26 + base
             result += chr(shifted)
         else:
             # this else is for non alphabet characters

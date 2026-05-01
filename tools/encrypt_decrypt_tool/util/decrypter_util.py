@@ -160,7 +160,7 @@ def caesar_decrypt(text, shift):
             # Uppercase (A-Z): numbers 65 to 90
             # Lowercase (a-z): numbers 97 to 122
 
-            new_char = chr((ord(char) - start - shift) % 26 + start)
+            new_char = chr((ord(char) - start - int(shift)) % 26 + start)
             result += new_char
         
         # if not letter (eg space) code skips math and adds
