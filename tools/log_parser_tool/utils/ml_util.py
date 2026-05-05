@@ -78,4 +78,4 @@ def tfid_vectorizer(lines):
     print(tfid_matrix.toarray())
 
 
-predict(logs, log_lines)
+# predict(logs, log_lines)
