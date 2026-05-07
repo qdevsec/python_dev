@@ -1,9 +1,12 @@
 import re
 from pathlib import Path
+from tabulate import tabulate
 from utils.re_patterns import IOC_PATTERNS
 from utils.ml_util import *
 
 data = []
+
+table = [(i,k) for i, k in enumerate(sorted(IOC_PATTERNS.keys()), 1)]
 
 def parser(ans, path):
     log_line = "User downloaded malware.exe and connected to 192.168.1.100 at 2023-04-05T12:34:56Z"
@@ -44,7 +47,7 @@ def parser(ans, path):
         print(f"{i}")
 
 def start():
-    ans = input(f"What pattern do you want to search for: {IOC_PATTERNS.keys()}: ")
+    ans = input(f"What pattern do you want to search for: {tabulate(table, headers=["#", "IOC"])}: ")
     path = input("Point me to the file: ").strip()
     parser(ans, path)
 
