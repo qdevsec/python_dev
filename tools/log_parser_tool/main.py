@@ -47,7 +47,7 @@ def parser(ans, path):
         print(f"{i}")
 
 def start():
-    ans = input(f"What pattern do you want to search for: {tabulate(table, headers=["#", "IOC"])}: ")
+    ans = input(f"What pattern do you want to search for: \n {tabulate(table, headers=["#", "IOC"])} \n: ")
     path = input("Point me to the file: ").strip()
     parser(ans, path)
 
