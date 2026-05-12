@@ -14,7 +14,7 @@ log_lines = [
     "Accepted password for admin from 192.168.1.10",
 ]
 
-def predict(logs, log_lines):
+def predict_plot(logs):
     # preprocess and vectorize
     # collect collection of unformatted logs document to tf-idf features
     vectorize = TfidfVectorizer()
@@ -38,10 +38,27 @@ def predict(logs, log_lines):
     plt.show()
 
 
+def anomaly():
+    # preprocess and vectorize
+    # collect collection of unformatted logs document to tf-idf features
+    vectorize = TfidfVectorizer()
+    X = vectorize.fit_transform(log_lines)
 
+    # train Isolation forest object
+    # contamination: estimated % of anomalies in log data
+    model = IsolationForest(contamination=0.1, n_estimators=200, random_state=42)
+    model.fit(X)
     # seem to only find the rare value
     # make prediction, -1 is an anomaly, 1 is normal
     predictions = model.predict(X)
+
+    scores = model.decision_function(X)  # how weird each log line is (lower = more suspicious)
+    # labels = model.predict
+    # visualize
+    # perplexity - the effective number of nearest neighbors t-SNE uses
+    # low perplexity - each point cares about only a few neighbors
+    # high perplexity - each point cares about many neighbors
+    X_2d = TSNE(n_components=2, perplexity=1).fit_transform(X)
 
     # rank the most suspicious log lines
     anomaly_indices = np.argsort(scores)[:20]  # top 20 weirdest logs
