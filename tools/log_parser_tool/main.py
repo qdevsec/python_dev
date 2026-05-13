@@ -5,6 +5,7 @@ from utils.re_patterns import IOC_PATTERNS
 from utils.ml_util import *
 
 data = []
+lines = []
 
 table = [(i,k) for i, k in enumerate(sorted(IOC_PATTERNS.keys()), 1)]
 
@@ -29,12 +30,18 @@ def parser(ans, path):
             for line_number, line in enumerate(file, 1):
                 if log_pattern.search(line):
                     data.append(f"Line {line_number}: {line}")
+                    lines.append(line)
                 
         # Extract suspicious files
         # files = [m[0] for m in re.findall(IOC_PATTERNS["suspicious_file"], log_line)]
 
         # Extract timestamps
         # timestamps = re.findall(IOC_PATTERNS["iso8601"], log_line)
+
+
+   
+
+
     except FileNotFoundError:
         print("Error: The file does not exist")
     except PermissionError:
@@ -46,10 +53,21 @@ def parser(ans, path):
     for i in data:
         print(f"{i}")
 
+    ml_use = input(f"Would you like to use ml utilities? [anomaly or predict or vectorize]: ").lower()
+        # Use ML
+    if ml_use == "anomaly":
+        anomaly(lines)
+    if ml_use == "predict":
+        predict_plot(lines)
+    if ml_use == "vectorize":
+        tfid_vectorizer(lines)
+
 def start():
     ans = input(f"What pattern do you want to search for: \n {tabulate(table, headers=["#", "IOC"])} \n: ")
     path = input("Point me to the file: ").strip()
     parser(ans, path)
+
+
 
 ##
 start()

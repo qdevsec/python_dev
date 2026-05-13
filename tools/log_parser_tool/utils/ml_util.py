@@ -18,7 +18,7 @@ def predict_plot(logs):
     # preprocess and vectorize
     # collect collection of unformatted logs document to tf-idf features
     vectorize = TfidfVectorizer()
-    X = vectorize.fit_transform(log_lines)
+    X = vectorize.fit_transform(logs)
 
     # train Isolation forest object
     # contamination: estimated % of anomalies in log data
@@ -38,11 +38,11 @@ def predict_plot(logs):
     plt.show()
 
 
-def anomaly():
+def anomaly(logs):
     # preprocess and vectorize
     # collect collection of unformatted logs document to tf-idf features
     vectorize = TfidfVectorizer()
-    X = vectorize.fit_transform(log_lines)
+    X = vectorize.fit_transform(logs)
 
     # train Isolation forest object
     # contamination: estimated % of anomalies in log data
