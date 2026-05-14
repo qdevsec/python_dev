@@ -4,6 +4,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.ensemble import IsolationForest
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
+import mplcursors
 import numpy as np
 
 logs = ["INFO: User login", "INFO: User login", "ERROR: Disk full", "ERROR: Disk full", "ERROR: Disk full", "INFO: User login", "INFO: login from different location"]
@@ -33,8 +34,20 @@ def predict_plot(logs):
     # high perplexity - each point cares about many neighbors
     X_2d = TSNE(n_components=2, perplexity=1).fit_transform(X)
 
-    plt.scatter(X_2d[:,0], X_2d[:,1], c=scores, cmap='coolwarm')
+    scatter = plt.scatter(X_2d[:,0], X_2d[:,1], c=scores, cmap='coolwarm')
     plt.colorbar(label="Anomaly Score")
+    
+    # # add mpl so you can hover over points and see more info
+    cursor = mplcursors.cursor(scatter, hover=True)
+
+    @cursor.connect("add")
+    def on_add(sel):
+        x, y = sel.target
+        # i = sel.index
+        sel.annotation.set_text(
+            f"x={x}\ny={y}"
+        )
+    
     plt.show()
 
 

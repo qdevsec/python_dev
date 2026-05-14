@@ -53,7 +53,8 @@ def parser(ans, path):
     for i in data:
         print(f"{i}")
 
-    ml_use = input(f"Would you like to use ml utilities? [anomaly or predict or vectorize]: ").lower()
+    # prompt user about ML capability
+    ml_use = input(f"Would you like to use ml utilities? [anomaly, predict, vectorize]: ").lower()
         # Use ML
     if ml_use == "anomaly":
         anomaly(lines)
