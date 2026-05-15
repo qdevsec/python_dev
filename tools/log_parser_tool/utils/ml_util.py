@@ -4,6 +4,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.ensemble import IsolationForest
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
 import mplcursors
 import numpy as np
 
@@ -15,11 +17,16 @@ log_lines = [
     "Accepted password for admin from 192.168.1.10",
 ]
 
-def predict_plot(logs):
+def predict_plot(logs, df_lines):
     # preprocess and vectorize
     # collect collection of unformatted logs document to tf-idf features
     vectorize = TfidfVectorizer()
-    X = vectorize.fit_transform(logs)
+
+    if logs != "":
+
+        X = vectorize.fit_transform(logs)
+    else:
+        raise ValueError("Need log data, the select IOC was not found in logs")
 
     # train Isolation forest object
     # contamination: estimated % of anomalies in log data
@@ -34,20 +41,53 @@ def predict_plot(logs):
     # high perplexity - each point cares about many neighbors
     X_2d = TSNE(n_components=2, perplexity=1).fit_transform(X)
 
-    scatter = plt.scatter(X_2d[:,0], X_2d[:,1], c=scores, cmap='coolwarm')
+    sns.set_theme(style="darkgrid")
+
+    plt.figure(figsize=(12, 6))
+
+
+    num_cols = df_lines.select_dtypes(include="number").columns.tolist()
+    
+    # debug
+    print(f"df_lines: {df_lines}")
+    print(f"Num cols: {num_cols}")
+
+    x_col = ''
+    y_col = ''
+
+    if len(num_cols) >= 2:
+        x_col = num_cols[0]
+        y_col = num_cols[1]
+    else:
+        raise ValueError("need at least 2 numeric field to create x y plot")
+
+    sns.scatterplot(
+        data=df_lines,
+        x=x_col,
+        y=y_col
+    )
+
+    plt.xlabel("Bytes In")
+    plt.ylabel("Bytes Out")
+
+
+
+    plt.scatter(X_2d[:,0], X_2d[:,1], c=scores, cmap='coolwarm')
     plt.colorbar(label="Anomaly Score")
     
-    # # add mpl so you can hover over points and see more info
-    cursor = mplcursors.cursor(scatter, hover=True)
+    # # # add mpl so you can hover over points and see more info
+    # cursor = mplcursors.cursor(scatter, hover=True)
 
-    @cursor.connect("add")
-    def on_add(sel):
-        x, y = sel.target
-        # i = sel.index
-        sel.annotation.set_text(
-            f"x={x}\ny={y}"
-        )
-    
+    # @cursor.connect("add")
+    # def on_add(sel):
+    #     x, y = sel.target
+    #     # i = sel.index
+    #     sel.annotation.set_text(
+    #         f"x={x}\ny={y}"
+    #     )
+
+    plt.title(f"Flow Prediction Analysis {y_col} vs {x_col}")    
+    plt.tight_layout()
     plt.show()
 
 

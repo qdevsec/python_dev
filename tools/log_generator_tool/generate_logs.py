@@ -2,7 +2,7 @@ import random
 from utils.pattern_injector import inject_iocs
 from datetime import datetime, timedelta
 
-def generate_sample_logs(filename="access.log", num_entries=100):
+def generate_sample_logs(filename="access.log", num_entries=300):
     ips = ["192.168.1.10", "172.16.0.5", "10.0.0.99"]
     pages = ["/index.html", "/login", "/dashboard", "/api/v1/data"]
     

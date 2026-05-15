@@ -1,6 +1,6 @@
 # utils/patterns.py
 """
-Common regex patterns for threat hunting and log analysis
+Common regex patterns for threat hunting and log analysis, log lines df will be structured from this
 """
 
 IOC_PATTERNS = {
