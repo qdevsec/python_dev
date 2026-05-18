@@ -72,19 +72,21 @@ def predict_plot(logs, df_lines):
 
 
 
-    plt.scatter(X_2d[:,0], X_2d[:,1], c=scores, cmap='coolwarm')
+    scatter = plt.scatter(X_2d[:,0], X_2d[:,1], c=scores, cmap='coolwarm')
     plt.colorbar(label="Anomaly Score")
     
-    # # # add mpl so you can hover over points and see more info
-    # cursor = mplcursors.cursor(scatter, hover=True)
+    # # add mpl so you can hover over points and see more info
+    cursor = mplcursors.cursor(scatter, hover=True)
 
-    # @cursor.connect("add")
-    # def on_add(sel):
-    #     x, y = sel.target
-    #     # i = sel.index
-    #     sel.annotation.set_text(
-    #         f"x={x}\ny={y}"
-    #     )
+    @cursor.connect("add")
+    def on_add(sel):
+        x, y = sel.target
+        i = sel.index
+        sel.annotation.set_text(
+            f"Point: {i}\n"
+            f"Value: ({x[i]}, {y[i]})\n"
+            f"Score: {scores[i]}"
+        )
 
     plt.title(f"Flow Prediction Analysis {y_col} vs {x_col}")    
     plt.tight_layout()
