@@ -84,7 +84,7 @@ def predict_plot(logs, df_lines):
         i = sel.index
         sel.annotation.set_text(
             f"Point: {i}\n"
-            f"Value: ({x[i]}, {y[i]})\n"
+            f"Value: ({x}, {y})\n"
             f"Score: {scores[i]}"
         )
 
