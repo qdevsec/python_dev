@@ -49,8 +49,8 @@ def predict_plot(logs, df_lines):
     num_cols = df_lines.select_dtypes(include="number").columns.tolist()
     
     # debug
-    print(f"df_lines: {df_lines}")
-    print(f"Num cols: {num_cols}")
+    # print(f"df_lines: {df_lines}")
+    # print(f"Num cols: {num_cols}")
 
     x_col = ''
     y_col = ''

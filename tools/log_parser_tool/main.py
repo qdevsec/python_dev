@@ -11,6 +11,7 @@ lines = []
 
 table = [(i,k) for i, k in enumerate(sorted(IOC_PATTERNS.keys()), 1)]
 
+# detect randomness
 def shannon_entropy(data):
     if not data:
         return 0
@@ -20,6 +21,7 @@ def shannon_entropy(data):
 
     return - sum(p * math.log2(p) for p in probs)
 
+# extract features 
 def extract_features(line, patterns):
     features = {}
 
@@ -78,8 +80,8 @@ def parser(ans, path):
         print(f"Error: A system error occurred: {e}")
 
 
-    for i in data:
-        print(f"{i}")
+    # for i in data:
+    #     print(f"{i}")
 
     records = [
         extract_features(line, IOC_PATTERNS)
@@ -92,7 +94,10 @@ def parser(ans, path):
     if ml_use == "anomaly":
         anomaly(lines)
     if ml_use == "predict":
+        # print(records)
         df_lines = pd.DataFrame(records)
+        print(df_lines.head())
+        print(df_lines.describe())
         predict_plot(lines, df_lines)
     if ml_use == "vectorize":
         tfid_vectorizer(lines)
