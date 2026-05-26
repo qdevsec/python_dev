@@ -5,6 +5,7 @@ from pathlib import Path
 from tabulate import tabulate
 from utils.re_patterns import IOC_PATTERNS
 from utils.ml_util import *
+from InquirerPy import inquirer
 
 data = []
 lines = []
@@ -103,7 +104,48 @@ def parser(ans, path):
         tfid_vectorizer(lines)
 
 def start():
-    ans = input(f"What pattern do you want to search for: \n {tabulate(table, headers=["#", "IOC"])} \n: ")
+    
+    ans = ""
+
+    # enable user to filter if they dont know the ioc exactly, or present neat table of iocs
+    choice = input("Do you prefer to provide an ioc (partial or whole) or to be present with a table? [provide, present]: ").lower()
+
+    if choice == 'provide':
+        search = input("Filter IOC types (blank for all) or pow | Pow  for [powershell_encoded, powershell_download] : ").lower()
+
+        filtered = [
+            i for i in IOC_PATTERNS.keys()
+            if search in i.lower()
+        ]
+
+        if not filtered:
+            print("No matches found, try again ")
+            a = input("Do you want to try again? ").lower()
+            if a == 'yes':
+                start()
+            else:
+                print("Okay bye.")
+                exit()
+        
+        print("\nResults: ")
+        for i, item in enumerate(filtered, 1):
+            print(f"{i}. {item}")
+
+        num = input("\nSelect IOC #: ")
+        ans = filtered[int(num) - 1]
+    
+    if choice == 'present':
+        b = inquirer.fuzzy(
+            message="here are the IOCs, use the up or down arrow keys to peruse through the IOC options:",
+            choices=list(IOC_PATTERNS.keys()),
+        ).execute()
+        print(b)
+
+        ans = b
+
+    # ans = input(f"What pattern do you want to search for: \n {tabulate(table, headers=["#", "IOC"])} \n: ")
+    
+    
     path = input("Point me to the file: ").strip()
     parser(ans, path)
 
