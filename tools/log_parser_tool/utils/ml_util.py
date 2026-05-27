@@ -138,16 +138,17 @@ def tfid_vectorizer(lines):
     - All-in-one process - directly computes both word counts (TF- term frequency) and inverse document frequency (IDF) 
     in one step
     """
+    print("Vectorizing....TfidVectorizer from the sklearn library turns text docs to matrix of TF-IDF features..\n\n")
 
     # create object, use fit
     vectorizer = TfidfVectorizer()
     tfid_matrix = vectorizer.fit_transform(lines)
 
     # output features
-    print(vectorizer.get_feature_names_out())
+    print(f"Here are the features:\n {vectorizer.get_feature_names_out()}")
 
     # converted text to numerical features, placed in array, 
-    print(tfid_matrix.toarray())
+    print(f"...converting to numer{tfid_matrix.toarray()}")
 
 
 # predict(logs, log_lines)

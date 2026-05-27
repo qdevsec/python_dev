@@ -53,7 +53,9 @@ def parser(ans, path):
 
     try:
         with open(f_path, "r") as file:
+            print("\n\n")
             print("....analyzing file")
+            print("\n\n")
 
             # matches = re.findall(IOC_PATTERNS[ans], file)
             
@@ -68,9 +70,6 @@ def parser(ans, path):
 
         # Extract timestamps
         # timestamps = re.findall(IOC_PATTERNS["iso8601"], log_line)
-
-
-    
 
 
     except FileNotFoundError:
@@ -97,8 +96,8 @@ def parser(ans, path):
     if ml_use == "predict":
         # print(records)
         df_lines = pd.DataFrame(records)
-        print(df_lines.head())
-        print(df_lines.describe())
+        # print(df_lines.head())
+        # print(df_lines.describe())
         predict_plot(lines, df_lines)
     if ml_use == "vectorize":
         tfid_vectorizer(lines)
@@ -131,7 +130,7 @@ def start():
         for i, item in enumerate(filtered, 1):
             print(f"{i}. {item}")
 
-        num = input("\nSelect IOC #: ")
+        num = input("\nSelect IOC (type the number): ")
         ans = filtered[int(num) - 1]
     
     if choice == 'present':
