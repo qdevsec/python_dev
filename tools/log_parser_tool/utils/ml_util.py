@@ -140,15 +140,22 @@ def tfid_vectorizer(lines):
     """
     print("Vectorizing....TfidVectorizer from the sklearn library turns text docs to matrix of TF-IDF features..\n\n")
 
+    # print(f"log lines:\n {lines}\n\n")
+
     # create object, use fit
     vectorizer = TfidfVectorizer()
+
+    # convert log lines into TF-IDF matrix
     tfid_matrix = vectorizer.fit_transform(lines)
 
     # output features
-    print(f"Here are the features:\n {vectorizer.get_feature_names_out()}")
+    print(f"Here are the features:\n {vectorizer.get_feature_names_out()}\n\n")
+
+    # see matrix shape
+    print(f"shape: {tfid_matrix.shape} \n\n")
 
     # converted text to numerical features, placed in array, 
-    print(f"...converting to numer{tfid_matrix.toarray()}")
+    print(f"...converting to numerical features and storing in array \n\n {tfid_matrix.toarray()}")
 
 
 # predict(logs, log_lines)

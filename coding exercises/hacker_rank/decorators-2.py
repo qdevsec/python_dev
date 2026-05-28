@@ -19,6 +19,10 @@
 #     print(f"Here is your {flavor} ice cream")
 
 # get_ice_cream("vanilla")
+#
+# Output:
+# You add sprinkles
+# Here is your vanilla ice cream
 import operator
 
 def person_lister(f):
