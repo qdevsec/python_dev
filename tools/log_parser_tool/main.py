@@ -10,7 +10,8 @@ from InquirerPy import inquirer
 data = []
 lines = []
 
-table = [(i,k) for i, k in enumerate(sorted(IOC_PATTERNS.keys()), 1)]
+# deprecated, used in line 152 when IOCs were presented in  
+# table = [(i,k) for i, k in enumerate(sorted(IOC_PATTERNS.keys()), 1)]
 
 # detect randomness
 def shannon_entropy(data):
@@ -22,7 +23,8 @@ def shannon_entropy(data):
 
     return - sum(p * math.log2(p) for p in probs)
 
-# extract features 
+# extract features also known as the ioc names
+#  
 def extract_features(line, patterns):
     features = {}
 
@@ -32,24 +34,35 @@ def extract_features(line, patterns):
         features[f"{name}_count"] = len(matches)
 
     features["line_length"] = len(line)
+    # lightweight statistical signal about the structure and content of the log line
     features["digit_ratio"] = (
         sum(c.isdigit() for c in line) / max(len(line), 1)
     )
 
     features["entropy"] = shannon_entropy(line)
 
+    # print(f"\n features:\n {features} \n")
+
     return features
 
 def parser(ans, path):
-    log_line = "User downloaded malware.exe and connected to 192.168.1.100 at 2023-04-05T12:34:56Z"
-    print("#------------ Starting -----------------")
+
+
+    # may have multiple occurrences
+    items_all = []
+
+    findall_results = []
+
+    print("#------------ Starting -----------------\n")
     # Extract IPs
 
     log_pattern = re.compile(IOC_PATTERNS[ans])
 
     # format path
     f_path = Path(path).expanduser().resolve()
-    print(f"{f_path}")
+    
+    # debug: path to file
+    # print(f"{f_path}")
 
     try:
         with open(f_path, "r") as file:
@@ -61,16 +74,23 @@ def parser(ans, path):
             
             # iterates directly over the file object (lazy loading)
             for line_number, line in enumerate(file, 1):
+                findall = log_pattern.findall(line)
+
+                # extend instead of append because extend() unpacks the list (findall() produces a list) and appends value
+                findall_results.extend(findall)
+
                 if log_pattern.search(line):
                     data.append(f"Line {line_number}: {line}")
                     lines.append(line)
+
+                    for i in findall:
+                        items_all.append(i)
                 
         # Extract suspicious files
         # files = [m[0] for m in re.findall(IOC_PATTERNS["suspicious_file"], log_line)]
 
         # Extract timestamps
         # timestamps = re.findall(IOC_PATTERNS["iso8601"], log_line)
-
 
     except FileNotFoundError:
         print("Error: The file does not exist")
@@ -89,25 +109,36 @@ def parser(ans, path):
     ]
 
     # prompt user about ML capability
-    ml_use = input(f"Would you like to use ml utilities? [anomaly, predict, vectorize]: ").lower()
+    ml_use = input(f"Would you like to use ml utilities? [anomaly, predict, vectorize, plurality]: ").lower()
         # Use ML
     if ml_use == "anomaly":
+        # print(lines)
+        # print(f"all items: \n{items_all}\n")
+
         anomaly(lines)
     if ml_use == "predict":
+        # print(f"all items: \n{items_all}\n")
+
         # print(records)
         df_lines = pd.DataFrame(records)
         # print(df_lines.head())
         # print(df_lines.describe())
         predict_plot(lines, df_lines)
     if ml_use == "vectorize":
+        # print(f"all items: \n{items_all}\n")
+
         tfid_vectorizer(lines)
+    if ml_use == "plurality":
+        # print(f"main: {findall_results}")
+        plurality(findall_results)
+
 
 def start():
     
     ans = ""
 
     # enable user to filter if they dont know the ioc exactly, or present neat table of iocs
-    choice = input("Do you prefer to provide an ioc (partial or whole) or to be present with a table? [provide, present]: ").lower()
+    choice = input("\n\nDo you prefer to provide an ioc (partial or whole) or to be present with a table? [provide, present]: ").lower()
 
     if choice == 'provide':
         search = input("Filter IOC types (blank for all) or pow | Pow  for [powershell_encoded, powershell_download] : ").lower()
@@ -138,17 +169,14 @@ def start():
             message="here are the IOCs, use the up or down arrow keys to peruse through the IOC options:",
             choices=list(IOC_PATTERNS.keys()),
         ).execute()
-        print(b)
+        print(f"[{b}]")
 
         ans = b
 
-    # ans = input(f"What pattern do you want to search for: \n {tabulate(table, headers=["#", "IOC"])} \n: ")
-    
+    # ans = input(f"What pattern do you want to search for: \n {tabulate(table, headers=["#", "IOC"])} \n: ")   
     
     path = input("Point me to the file: ").strip()
     parser(ans, path)
-
-
 
 ##
 start()
