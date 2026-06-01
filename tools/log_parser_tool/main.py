@@ -5,9 +5,10 @@ from pathlib import Path
 from tabulate import tabulate
 from utils.re_patterns import IOC_PATTERNS
 from utils.ml_util import *
+from utils.reg_util import *
 from InquirerPy import inquirer
 
-data = []
+data = {}
 lines = []
 
 # deprecated, used in line 152 when IOCs were presented in  
@@ -66,25 +67,32 @@ def parser(ans, path):
 
     try:
         with open(f_path, "r") as file:
-            print("\n\n")
             print("....analyzing file")
-            print("\n\n")
+            print("\n")
 
             # matches = re.findall(IOC_PATTERNS[ans], file)
             
             # iterates directly over the file object (lazy loading)
             for line_number, line in enumerate(file, 1):
-                findall = log_pattern.findall(line)
+                
+                find = ''
+
+                match = log_pattern.search(line)
+
+                if match:
+                    find = match.group(0)
 
                 # extend instead of append because extend() unpacks the list (findall() produces a list) and appends value
-                findall_results.extend(findall)
+                findall_results.append(find)
 
-                if log_pattern.search(line):
-                    data.append(f"Line {line_number}: {line}")
-                    lines.append(line)
+                # create data structure with the line number and specific ioc
+                # data.append(f"Line {line_number}: {findall}")
+                data[line_number] = find
 
-                    for i in findall:
-                        items_all.append(i)
+                # data.append(f"Line {line_number}: {line}")
+                lines.append(line)
+
+                items_all.append(find)
                 
         # Extract suspicious files
         # files = [m[0] for m in re.findall(IOC_PATTERNS["suspicious_file"], log_line)]
@@ -108,37 +116,55 @@ def parser(ans, path):
         for line in lines
     ]
 
-    # prompt user about ML capability
-    ml_use = input(f"Would you like to use ml utilities? [anomaly, predict, vectorize, plurality]: ").lower()
-        # Use ML
-    if ml_use == "anomaly":
-        # print(lines)
-        # print(f"all items: \n{items_all}\n")
+    category = input("Would category of functions would you like to use [normal, machine-learning]: ").lower()
 
-        anomaly(lines)
-    if ml_use == "predict":
-        # print(f"all items: \n{items_all}\n")
+    if category == 'machine-learning':
 
-        # print(records)
-        df_lines = pd.DataFrame(records)
-        # print(df_lines.head())
-        # print(df_lines.describe())
-        predict_plot(lines, df_lines)
-    if ml_use == "vectorize":
-        # print(f"all items: \n{items_all}\n")
+        # prompt user about ML capability
+        ml_use = input(f"What ml utilities would you like to use? [anomaly, predict, vectorize]: ").lower()
+            # Use ML
+        if ml_use == "anomaly":
+            # print(lines)
+            # print(f"all items: \n{items_all}\n")
 
-        tfid_vectorizer(lines)
-    if ml_use == "plurality":
-        # print(f"main: {findall_results}")
-        plurality(findall_results)
+            anomaly(lines)
+        if ml_use == "predict":
+            # print(f"all items: \n{items_all}\n")
+
+            # print(records)
+            df_lines = pd.DataFrame(records)
+            # print(df_lines.head())
+            # print(df_lines.describe())
+            predict_plot(lines, df_lines)
+        
+        if ml_use == "vectorize":
+            # print(f"all items: \n{items_all}\n")
+            tfid_vectorizer(lines)
+        
+
+    if category == 'normal':
+        # prompt user about normal function 
+        norm_use = input(f"What normal utilities would you like to use? [plurality, unique]: ").lower()
+
+        if norm_use == "plurality":
+            # print(f"main: {findall_results}")
+            plurality(findall_results)
+
+        if norm_use == "unique":
+            unique(data)
 
 
 def start():
     
     ans = ""
 
+    print("👋 Hi, this tools lets you perform analysis on log files, here are the tool features: \n"
+          "  - allows you to provide path to log file \n" 
+          "  - allows you to search for IOCs (eg ipv4, md5, etc) or be presented the total list of IOCs \n"  
+          "  - presents ml functions and other functions to get analysis on the log files \n ")
+
     # enable user to filter if they dont know the ioc exactly, or present neat table of iocs
-    choice = input("\n\nDo you prefer to provide an ioc (partial or whole) or to be present with a table? [provide, present]: ").lower()
+    choice = input("Do you prefer to provide an ioc (partial or whole) or to be present with a table? [provide, present]: ").lower()
 
     if choice == 'provide':
         search = input("Filter IOC types (blank for all) or pow | Pow  for [powershell_encoded, powershell_download] : ").lower()

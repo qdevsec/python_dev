@@ -1,22 +1,13 @@
 # find keyword importance, highlight most meaningful words
-
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.ensemble import IsolationForest
 from sklearn.manifold import TSNE
-from collections import Counter
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import mplcursors
 import numpy as np
 
-logs = ["INFO: User login", "INFO: User login", "ERROR: Disk full", "ERROR: Disk full", "ERROR: Disk full", "INFO: User login", "INFO: login from different location"]
-lines = ["The quick brown fox","The agile cat", "The lazy dog", "The fox and the cat", "The dog and the fox"]
-log_lines = [
-    "Failed password for invalid user root from 10.0.0.5",
-    "GET /index.html 200",
-    "Accepted password for admin from 192.168.1.10",
-]
 
 def predict_plot(logs, df_lines):
     # preprocess and vectorize
@@ -150,39 +141,13 @@ def tfid_vectorizer(lines):
     tfid_matrix = vectorizer.fit_transform(lines)
 
     # output features
-    print(f"Here are the features:\n {vectorizer.get_feature_names_out()}\n\n")
+    print(f"Here are the features:\n {vectorizer.get_feature_names_out()}\n")
 
     # see matrix shape
-    print(f"shape: {tfid_matrix.shape} \n\n")
+    print(f"shape: {tfid_matrix.shape} \n")
 
     # converted text to numerical features, placed in array, 
-    print(f"...converting to numerical features and storing in array \n\n {tfid_matrix.toarray()}")
-
-
-def plurality(findall):
-    """
-    calculate the iocs that show up most often
-    assign a score 
-    """
-    scores = {}
-    counter = Counter()
-
-    # print(findall)
-
-    for i in findall:
-        counter[i] += 1
-
-    
-    # print(f"{counter}")
-    
-    max_count = max(counter.values())
-
-    for item, count in counter.items():
-        scores[item] = count / max_count
-
-
-    for i in scores:
-        print(f"{i}: {scores[i]}")
+    print(f"...converting to numerical features and storing in array \n {tfid_matrix.toarray()}")
 
     
 
