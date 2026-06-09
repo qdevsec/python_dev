@@ -11,7 +11,8 @@ IOC_PATTERNS = {
     "ipv4": r"\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b",
 
     # More realistic IPv6 support (compressed included)
-    "ipv6": r"\b(?:[A-Fa-f0-9:]+:+)+[A-Fa-f0-9]+\b",
+    "ipv6": r"\b(?:[0-9A-Fa-f]{1,4}:){2,7}[0-9A-Fa-f]{1,4}\b",
+    
 
     "mac_address": r"\b(?:[0-9A-Fa-f]{2}[:-]){5}(?:[0-9A-Fa-f]{2})\b",
 

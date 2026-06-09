@@ -192,7 +192,7 @@ def start():
     
     if choice == 'present':
         b = inquirer.fuzzy(
-            message="here are the IOCs, use the up or down arrow keys to peruse through the IOC options:",
+            message="here are the IOCs, use the up or down arrow keys to peruse through the IOC options. Can also start typing out a word for filtering:",
             choices=list(IOC_PATTERNS.keys()),
         ).execute()
         print(f"[{b}]")

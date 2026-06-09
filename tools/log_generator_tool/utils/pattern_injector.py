@@ -15,7 +15,7 @@ def random_string(length=8):
 
 
 # will be called to randomly embed iocs in log messages
-def inject_iocs(base_log, max_inserts=3):
+def inject_iocs(base_log, max_inserts=4):
     keys = list(IOC_GENERATORS.keys())
     inserts = random.sample(keys, random.randint(1, max_inserts))
 
