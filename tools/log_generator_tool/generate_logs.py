@@ -1,5 +1,5 @@
 import random
-from utils.pattern_injector import inject_iocs
+from utils.pattern_injector import inject_iocs, IOC_GENERATORS
 from datetime import datetime, timedelta
 
 def generate_sample_logs(filename="access.log", num_entries=500):
@@ -26,7 +26,7 @@ def generate_sample_logs(filename="access.log", num_entries=500):
             timestamp = current_time.strftime("%d/%b/%Y:%H:%M:%S")
 
             base_log = (
-                f'192.168.1.{random.randint(1,255)} - - '
+                f'192.168.1.{random.randint(1,255)}:{IOC_GENERATORS['port']()} - - '
                 f'[{timestamp} +0000] "GET /index.html HTTP/1.1" '
                 f'{random.choice([200,404,500])} {random.randint(100,5000)}'
             )

@@ -80,7 +80,7 @@ def parser(ans, path):
                 match = log_pattern.search(line)
 
                 if match:
-                    find = match.group(0)
+                    find = match.group(ans)
 
                 # extend instead of append because extend() unpacks the list (findall() produces a list) and appends value
                 findall_results.append(find)

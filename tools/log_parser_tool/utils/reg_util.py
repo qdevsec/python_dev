@@ -8,18 +8,24 @@ def plurality(findall):
     scores = {}
     counter = Counter()
 
-    # print(findall)
-
     for i in findall:
         counter[i] += 1
-
     
+    total = sum(counter.values())
+
+    # print(findall)
+
     # print(f"{counter}")
     
-    max_count = max(counter.values())
+    # max_count = max(counter.values())
 
-    for item, count in counter.items():
-        scores[item] = count / max_count
+    # for item, count in counter.items():
+    #     scores[item] = count / max_count
+
+    scores = {
+        item: count / total
+        for item, count in counter.items()
+    }
 
     ans = input("Would you like to output be [file, console, both]: ")
 
