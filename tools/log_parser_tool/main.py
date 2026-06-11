@@ -80,7 +80,11 @@ def parser(ans, path):
                 match = log_pattern.search(line)
 
                 if match:
-                    find = match.group(ans)
+                    if ans == "port":
+                        a = match.group(0)
+                        find = a.strip(":")  
+                    else:
+                        find = match.group(0)
 
                 # extend instead of append because extend() unpacks the list (findall() produces a list) and appends value
                 findall_results.append(find)
@@ -144,7 +148,7 @@ def parser(ans, path):
 
     if category == 'normal':
         # prompt user about normal function 
-        norm_use = input(f"What normal utilities would you like to use? [plurality, unique]: ").lower()
+        norm_use = input(f"What normal utilities would you like to use? [plurality, unique, top]: ").lower()
 
         if norm_use == "plurality":
             # print(f"main: {findall_results}")
@@ -152,6 +156,10 @@ def parser(ans, path):
 
         if norm_use == "unique":
             unique(data)
+
+        if norm_use == "top":
+            n = int(input("number of top values to return: "))
+            top(data, n)
 
 
 def start():

@@ -54,4 +54,16 @@ def unique(data):
     unique_iocs = list(set(data.values()))
     print(unique_iocs)
 
+def top(data, n):
+    """
+    takes dict {line #: ioc_value} and n (int): # of top values to return 
+    returns the n most common IOC value
 
+    prints list[tuple]: [(ioc, count), ...]
+    """
+    counts = Counter(data.values())
+
+    most_common = counts.most_common(n)
+    
+    for i in most_common:
+        print(i)
