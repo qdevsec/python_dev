@@ -148,7 +148,7 @@ def parser(ans, path):
 
     if category == 'normal':
         # prompt user about normal function 
-        norm_use = input(f"What normal utilities would you like to use? [plurality, unique, top]: ").lower()
+        norm_use = input(f"What normal utilities would you like to use? [plurality, unique, top, frequency]: ").lower()
 
         if norm_use == "plurality":
             # print(f"main: {findall_results}")
@@ -161,6 +161,8 @@ def parser(ans, path):
             n = int(input("number of top values to return: "))
             top(data, n)
 
+        if norm_use == "frequency":
+            get_frequencies(data)
 
 def start():
     

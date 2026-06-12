@@ -67,3 +67,16 @@ def top(data, n):
     
     for i in most_common:
         print(i)
+
+def get_frequencies(data):
+    
+    iocs = Counter(data.values())
+    ans = input("Would you like results printed vertically or wrapped? [vert, wrap]: ")
+    
+    if ans == 'vert':
+    
+        for i in iocs:
+            print(f"{i}: {iocs[i]}")
+
+    if ans == 'wrap':
+        print(iocs)
