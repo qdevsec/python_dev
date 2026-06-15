@@ -26,25 +26,39 @@ def shannon_entropy(data):
 
 # extract features also known as the ioc names
 #  
-def extract_features(line, patterns):
+def extract_features(line, compiled_patterns):
     features = {}
+    length = max(len(line), 1)
 
-    for name, pattern in patterns.items():
-        matches = re.findall(pattern, line)
 
-        features[f"{name}_count"] = len(matches)
+    # IOC patterns
+    for name, pattern in compiled_patterns.items():
+        count = sum(1 for _ in pattern.finditer(line))
 
-    features["line_length"] = len(line)
+        features[f"{name}_count"] = count
+        features[f"{name}_density"] = count / length
+
+    # stats
+    features["line_length"] = length
     # lightweight statistical signal about the structure and content of the log line
-    features["digit_ratio"] = (
-        sum(c.isdigit() for c in line) / max(len(line), 1)
-    )
+    features["digit_ratio"] = sum(c.isdigit() for c in line) / length
+    features["uppercase_ratio"] = sum(c.isupper() for c in line) / length
+    features["specialchar_ratio"] = sum(not c.isalnum() for c in line) / length
 
-    features["entropy"] = shannon_entropy(line)
+    # tokens
+    tokens = line.split()
+    features["token_count"] = len(tokens)
+    features["avg_token_length"] = sum(len(t) for t in tokens) / max(len(tokens), 1)
+
+    # entropy
+    ent = shannon_entropy(line)
+    features["entropy"] = ent
+    features["high_entropy_flag"] = int(ent > 4.5)
 
     # print(f"\n features:\n {features} \n")
 
     return features
+
 
 def parser(ans, path):
 
@@ -115,10 +129,17 @@ def parser(ans, path):
     # for i in data:
     #     print(f"{i}")
 
+    compiled_patterns = {
+        name: re.compile(pattern)
+        for name, pattern in IOC_PATTERNS.items()
+    }
+
     records = [
-        extract_features(line, IOC_PATTERNS)
+        extract_features(line, compiled_patterns)
         for line in lines
     ]
+
+    X, scaler, feature_names = prepare_feature_matrix(records)
 
     category = input("Would category of functions would you like to use [normal, machine-learning]: ").lower()
 
@@ -136,14 +157,18 @@ def parser(ans, path):
             # print(f"all items: \n{items_all}\n")
 
             # print(records)
-            df_lines = pd.DataFrame(records)
+            # df_lines = pd.DataFrame(records)
             # print(df_lines.head())
             # print(df_lines.describe())
-            predict_plot(lines, df_lines)
+            
+            # passing in from prepare_feature_matrix() from ml_util tooling  
+            predict_plot(lines, X)
         
         if ml_use == "vectorize":
             # print(f"all items: \n{items_all}\n")
             tfid_vectorizer(lines)
+
+        
         
 
     if category == 'normal':

@@ -1,5 +1,6 @@
 # find keyword importance, highlight most meaningful words
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import IsolationForest
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
@@ -8,6 +9,20 @@ import pandas as pd
 import mplcursors
 import numpy as np
 
+# takes features dictionaries (records) and return clean matrix
+def prepare_feature_matrix(records, scalar=None, fit=True):
+    df = pd.DataFrame(records).fillna(0)
+    numeric_df = df.select_dtypes(include=["number"])
+
+    if scalar is None:
+        scaler = StandardScaler()
+
+    if fit:
+        X = scaler.fit_transform(numeric_df)
+    else:
+        X = scaler.transform(numeric_df)
+
+    return X, scaler, numeric_df.columns
 
 def predict_plot(logs, df_lines):
     # preprocess and vectorize
