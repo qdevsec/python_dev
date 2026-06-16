@@ -24,12 +24,14 @@ def prepare_feature_matrix(records, scalar=None, fit=True):
 
     return X, scaler, numeric_df.columns
 
-def predict_plot(logs, df_lines):
+def predict_plot(logs, X_prepped):
     # preprocess and vectorize
     # collect collection of unformatted logs document to tf-idf features
     vectorize = TfidfVectorizer()
 
     if logs != "":
+
+        print(logs)
 
         X = vectorize.fit_transform(logs)
     else:
@@ -53,29 +55,29 @@ def predict_plot(logs, df_lines):
     plt.figure(figsize=(12, 6))
 
 
-    num_cols = df_lines.select_dtypes(include="number").columns.tolist()
+    # num_cols = df_lines.select_dtypes(include="number").columns.tolist()
     
-    # debug
-    # print(f"df_lines: {df_lines}")
-    # print(f"Num cols: {num_cols}")
+    # # debug
+    # # print(f"df_lines: {df_lines}")
+    # # print(f"Num cols: {num_cols}")
 
-    x_col = ''
-    y_col = ''
+    # x_col = ''
+    # y_col = ''
 
-    if len(num_cols) >= 2:
-        x_col = num_cols[0]
-        y_col = num_cols[1]
-    else:
-        raise ValueError("need at least 2 numeric field to create x y plot")
+    # if len(num_cols) >= 2:
+    #     x_col = num_cols[0]
+    #     y_col = num_cols[1]
+    # else:
+    #     raise ValueError("need at least 2 numeric field to create x y plot")
 
-    sns.scatterplot(
-        data=df_lines,
-        x=x_col,
-        y=y_col
-    )
+    # sns.scatterplot(
+    #     data=df_lines,
+    #     x=x_col,
+    #     y=y_col
+    # )
 
-    plt.xlabel("Bytes In")
-    plt.ylabel("Bytes Out")
+    # plt.xlabel("Bytes In")
+    # plt.ylabel("Bytes Out")
 
 
 
@@ -95,7 +97,7 @@ def predict_plot(logs, df_lines):
             f"Score: {scores[i]}"
         )
 
-    plt.title(f"Flow Prediction Analysis {y_col} vs {x_col}")    
+    plt.title(f"Flow Prediction Analysis")    
     plt.tight_layout()
     plt.show()
 
