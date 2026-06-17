@@ -24,7 +24,9 @@ def prepare_feature_matrix(records, scalar=None, fit=True):
 
     return X, scaler, numeric_df.columns
 
-def predict_plot(logs, X_prepped):
+
+
+def predict_plot(logs):
     # preprocess and vectorize
     # collect collection of unformatted logs document to tf-idf features
     vectorize = TfidfVectorizer()

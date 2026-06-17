@@ -60,6 +60,48 @@ def extract_features(line, compiled_patterns):
     return features
 
 
+def multi_parser(ans, path):
+    
+    """
+    TODO: 
+
+    Instead of getting insight from one IOC see in from multiple iocs (ans) you can get analysis
+
+    Feature names
+    - with count get analysis summary (# of ipv4s, urls, domains, etc)
+    - top suspicious indicators: risk_score (suspicious_port_count * 3 + powershell_count * 5...)
+    - log classification types
+
+    scalar
+    - anomaly detection
+
+    Timelines***
+    - Activity Peaks
+    --------------
+    10:22:15 - IOC-rich activity detected
+    10:22:17 - Encoded PowerShell
+    10:22:19 - Service creation
+    10:22:22 - Registry modification
+
+    compiled_patterns = {
+        name: re.compile(pattern)
+        for name, pattern in IOC_PATTERNS.items()
+    }
+
+    records = [
+        extract_features(line, compiled_patterns)
+        for line in lines
+    ]
+
+    X, scaler, feature_names = prepare_feature_matrix(records)
+
+    # debug
+    print(f"X \n: {X}")
+    print(f"scaler \n: {scaler}")
+    print(f"feature_names \n: {feature_names}")
+    """
+    pass
+
 def parser(ans, path):
 
 
@@ -129,17 +171,7 @@ def parser(ans, path):
     # for i in data:
     #     print(f"{i}")
 
-    compiled_patterns = {
-        name: re.compile(pattern)
-        for name, pattern in IOC_PATTERNS.items()
-    }
 
-    records = [
-        extract_features(line, compiled_patterns)
-        for line in lines
-    ]
-
-    X, scaler, feature_names = prepare_feature_matrix(records)
 
     category = input("Would category of functions would you like to use [normal, machine-learning]: ").lower()
 
@@ -162,7 +194,7 @@ def parser(ans, path):
             # print(df_lines.describe())
             
             # passing in from prepare_feature_matrix() from ml_util tooling  
-            predict_plot(lines, X)
+            predict_plot(lines)
         
         if ml_use == "vectorize":
             # print(f"all items: \n{items_all}\n")
@@ -198,46 +230,81 @@ def start():
           "  - allows you to search for IOCs (eg ipv4, md5, etc) or be presented the total list of IOCs \n"  
           "  - presents ml functions and other functions to get analysis on the log files \n ")
 
-    # enable user to filter if they dont know the ioc exactly, or present neat table of iocs
-    choice = input("Do you prefer to provide an ioc (partial or whole) or to be present with a table? [provide, present]: ").lower()
+    multiple_single = input("do you want to analyze single ioc or multiple? [single, multiple] : ")
 
-    if choice == 'provide':
-        search = input("Filter IOC types (blank for all) or pow | Pow  for [powershell_encoded, powershell_download] : ").lower()
+    if multiple_single == "single":
 
-        filtered = [
-            i for i in IOC_PATTERNS.keys()
-            if search in i.lower()
-        ]
+        # enable user to filter if they dont know the ioc exactly, or present neat table of iocs
+        choice = input("Do you prefer to provide an ioc (partial or whole) or to be present with a table? [provide, present]: ").lower()
 
-        if not filtered:
-            print("No matches found, try again ")
-            a = input("Do you want to try again? ").lower()
-            if a == 'yes':
-                start()
-            else:
-                print("Okay bye.")
-                exit()
-        
-        print("\nResults: ")
-        for i, item in enumerate(filtered, 1):
-            print(f"{i}. {item}")
+        if choice == 'provide':
+            search = input("Filter IOC types (blank for all) or pow | Pow  for [powershell_encoded, powershell_download] : ").lower()
 
-        num = input("\nSelect IOC (type the number): ")
-        ans = filtered[int(num) - 1]
+            filtered = [
+                i for i in IOC_PATTERNS.keys()
+                if search in i.lower()
+            ]
+
+            if not filtered:
+                print("No matches found, try again ")
+                a = input("Do you want to try again? ").lower()
+                if a == 'yes':
+                    start()
+                else:
+                    print("Okay bye.")
+                    exit()
+
+            print("\nResults: ")
+            for i, item in enumerate(filtered, 1):
+                print(f"{i}. {item}")
+
+            num = input("\nSelect IOC (type the number): ")
+            ans = filtered[int(num) - 1]
+
+        if choice == 'present':
+            b = inquirer.fuzzy(
+                message="here are the IOCs, use the up or down arrow keys to peruse through the IOC options. Can also start typing out a word for filtering:",
+                choices=list(IOC_PATTERNS.keys()),
+            ).execute()
+            print(f"[{b}]")
+
+            ans = b
+
+        # ans = input(f"What pattern do you want to search for: \n {tabulate(table, headers=["#", "IOC"])} \n: ")   
+
+        path = input("Point me to the file: ").strip()
+        parser(ans, path)
+
+    if multiple_single == 'multiple':
+
+        # print(len(IOC_PATTERNS))
+        # print(list(IOC_PATTERNS.keys()))
     
-    if choice == 'present':
-        b = inquirer.fuzzy(
-            message="here are the IOCs, use the up or down arrow keys to peruse through the IOC options. Can also start typing out a word for filtering:",
+        # m_select = inquirer.fuzzy(
+        #     message="here are the IOCs, use the up or down arrow keys to peruse through the IOC options. \n " \
+        #     "Space to select, Enter when finished  \n" \
+        #     "Can also start typing out a word for filtering:",
+        #     choices=list(IOC_PATTERNS.keys()),
+        #     multiselect=True,
+        # ).execute()
+
+        selected = inquirer.checkbox(
+            message="Select IOC types, ↑ ↓ arrows → move through the list \n" \
+            "Space → toggle selection (✔ / unchecked) \n:" \
+            "Enter → finalize selection and exit prompt: ",
             choices=list(IOC_PATTERNS.keys()),
         ).execute()
-        print(f"[{b}]")
+        
+        # selected = inquirer.fuzzy(
+        #     message="Select:",
+        #     choices=["ip", "domain", "url", "hash"],
+        #     multiselect=True,
+        # ).execute()
 
-        ans = b
+        # print(f"[{selected}]")
 
-    # ans = input(f"What pattern do you want to search for: \n {tabulate(table, headers=["#", "IOC"])} \n: ")   
-    
-    path = input("Point me to the file: ").strip()
-    parser(ans, path)
+        path = input("Point me to the file: ").strip()
+        # multi_parser(m_select, path)
 
 ##
 start()
