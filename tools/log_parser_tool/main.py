@@ -10,6 +10,9 @@ from InquirerPy import inquirer
 
 data = {}
 lines = []
+    # may have multiple occurrences
+items_all = []
+findall_results = []
 
 # deprecated, used in line 152 when IOCs were presented in  
 # table = [(i,k) for i, k in enumerate(sorted(IOC_PATTERNS.keys()), 1)]
@@ -60,10 +63,13 @@ def extract_features(line, compiled_patterns):
     return features
 
 
-def multi_parser(ans, path):
+def multi_parser(multiple_single, ans, path):
     
     """
     TODO: 
+
+    ml_util - classify_events
+    reg_utils - correlate_iocs
 
     Instead of getting insight from one IOC see in from multiple iocs (ans) you can get analysis
 
@@ -100,15 +106,34 @@ def multi_parser(ans, path):
     print(f"scaler \n: {scaler}")
     print(f"feature_names \n: {feature_names}")
     """
-    pass
+    
+    results = {ioc: [] for ioc in ans}
 
-def parser(ans, path):
+    with open(path, "r") as f:
+        for line_num, line in enumerate(f, start=1):
 
+            for ioc in ans:
+                pattern = IOC_PATTERNS[ioc]
 
-    # may have multiple occurrences
-    items_all = []
+                if not pattern:
+                    continue
 
-    findall_results = []
+                matches = re.findall(pattern, line)
+
+                if matches:
+                    results[ioc].append({
+                        "line": line_num,
+                        "matches": matches,
+                        "raw": line.strip()
+                    })
+
+    print(results)
+
+    # progress to choosing function to perform analysis
+    choose_module(multiple_single, results)
+
+def parser(multiple_single, ans, path):
+
 
     print("#------------ Starting -----------------\n")
     # Extract IPs
@@ -170,56 +195,63 @@ def parser(ans, path):
 
     # for i in data:
     #     print(f"{i}")
+    choose_module(multiple_single, findall_results)
 
 
+def choose_module(multiple_single, results):
 
-    category = input("Would category of functions would you like to use [normal, machine-learning]: ").lower()
+    if multiple_single == 'single':
 
-    if category == 'machine-learning':
+        category = input("Would category of functions would you like to use [normal, machine-learning]: ").lower()
 
-        # prompt user about ML capability
-        ml_use = input(f"What ml utilities would you like to use? [anomaly, predict, vectorize]: ").lower()
-            # Use ML
-        if ml_use == "anomaly":
-            # print(lines)
-            # print(f"all items: \n{items_all}\n")
+        if category == 'machine-learning':
 
-            anomaly(lines)
-        if ml_use == "predict":
-            # print(f"all items: \n{items_all}\n")
+            # prompt user about ML capability
+            ml_use = input(f"What ml utilities would you like to use? [anomaly, predict, vectorize]: ").lower()
+                # Use ML
+            if ml_use == "anomaly":
+                # print(lines)
+                # print(f"all items: \n{items_all}\n")
 
-            # print(records)
-            # df_lines = pd.DataFrame(records)
-            # print(df_lines.head())
-            # print(df_lines.describe())
+                anomaly(lines)
+            if ml_use == "predict":
+                # print(f"all items: \n{items_all}\n")
+
+                # print(records)
+                # df_lines = pd.DataFrame(records)
+                # print(df_lines.head())
+                # print(df_lines.describe())
+                
+                # passing in from prepare_feature_matrix() from ml_util tooling  
+                predict_plot(lines)
             
-            # passing in from prepare_feature_matrix() from ml_util tooling  
-            predict_plot(lines)
-        
-        if ml_use == "vectorize":
-            # print(f"all items: \n{items_all}\n")
-            tfid_vectorizer(lines)
+            if ml_use == "vectorize":
+                # print(f"all items: \n{items_all}\n")
+                tfid_vectorizer(lines)
 
-        
-        
+            
+            
 
-    if category == 'normal':
-        # prompt user about normal function 
-        norm_use = input(f"What normal utilities would you like to use? [plurality, unique, top, frequency]: ").lower()
+        if category == 'normal':
+            # prompt user about normal function 
+            norm_use = input(f"What normal utilities would you like to use? [plurality, unique, top, frequency]: ").lower()
 
-        if norm_use == "plurality":
-            # print(f"main: {findall_results}")
-            plurality(findall_results)
+            if norm_use == "plurality":
+                # print(f"main: {findall_results}")
+                plurality(findall_results)
 
-        if norm_use == "unique":
-            unique(data)
+            if norm_use == "unique":
+                unique(data)
 
-        if norm_use == "top":
-            n = int(input("number of top values to return: "))
-            top(data, n)
+            if norm_use == "top":
+                n = int(input("number of top values to return: "))
+                top(data, n)
 
-        if norm_use == "frequency":
-            get_frequencies(data)
+            if norm_use == "frequency":
+                get_frequencies(data)
+
+    if multiple_single == 'multiple':
+        print("Please implement functions in modules so data can be passed to it")
 
 def start():
     
@@ -273,7 +305,7 @@ def start():
         # ans = input(f"What pattern do you want to search for: \n {tabulate(table, headers=["#", "IOC"])} \n: ")   
 
         path = input("Point me to the file: ").strip()
-        parser(ans, path)
+        parser(multiple_single, ans, path)
 
     if multiple_single == 'multiple':
 
@@ -304,7 +336,7 @@ def start():
         # print(f"[{selected}]")
 
         path = input("Point me to the file: ").strip()
-        # multi_parser(m_select, path)
+        multi_parser(multiple_single, selected, path)
 
 ##
 start()
