@@ -1,11 +1,10 @@
 import re
-import math
-from collections import Counter
 from pathlib import Path
 from tabulate import tabulate
 from utils.re_patterns import IOC_PATTERNS
 from utils.ml_util import *
 from utils.reg_util import *
+from utils.prep_util import *
 from InquirerPy import inquirer
 
 data = {}
@@ -14,53 +13,6 @@ lines = []
 items_all = []
 findall_results = []
 
-# deprecated, used in line 152 when IOCs were presented in  
-# table = [(i,k) for i, k in enumerate(sorted(IOC_PATTERNS.keys()), 1)]
-
-# detect randomness
-def shannon_entropy(data):
-    if not data:
-        return 0
-    
-    counts = Counter(data)
-    probs = [v / len(data) for v in counts.values()]
-
-    return - sum(p * math.log2(p) for p in probs)
-
-# extract features also known as the ioc names
-#  
-def extract_features(line, compiled_patterns):
-    features = {}
-    length = max(len(line), 1)
-
-
-    # IOC patterns
-    for name, pattern in compiled_patterns.items():
-        count = sum(1 for _ in pattern.finditer(line))
-
-        features[f"{name}_count"] = count
-        features[f"{name}_density"] = count / length
-
-    # stats
-    features["line_length"] = length
-    # lightweight statistical signal about the structure and content of the log line
-    features["digit_ratio"] = sum(c.isdigit() for c in line) / length
-    features["uppercase_ratio"] = sum(c.isupper() for c in line) / length
-    features["specialchar_ratio"] = sum(not c.isalnum() for c in line) / length
-
-    # tokens
-    tokens = line.split()
-    features["token_count"] = len(tokens)
-    features["avg_token_length"] = sum(len(t) for t in tokens) / max(len(tokens), 1)
-
-    # entropy
-    ent = shannon_entropy(line)
-    features["entropy"] = ent
-    features["high_entropy_flag"] = int(ent > 4.5)
-
-    # print(f"\n features:\n {features} \n")
-
-    return features
 
 
 def multi_parser(multiple_single, ans, path):
@@ -127,10 +79,12 @@ def multi_parser(multiple_single, ans, path):
                         "raw": line.strip()
                     })
 
-    print(results)
+    # print(results)
+    results_prepped = multi_extract_features(results)
+
 
     # progress to choosing function to perform analysis
-    choose_module(multiple_single, results)
+    choose_module(multiple_single, results_prepped)
 
 def parser(multiple_single, ans, path):
 
@@ -199,6 +153,12 @@ def parser(multiple_single, ans, path):
 
 
 def choose_module(multiple_single, results):
+    """
+    choice selection path function
+    - single ioc
+    - multiple iocs
+    - select regular or machine learning insight functions
+    """
 
     if multiple_single == 'single':
 
@@ -229,8 +189,6 @@ def choose_module(multiple_single, results):
                 # print(f"all items: \n{items_all}\n")
                 tfid_vectorizer(lines)
 
-            
-            
 
         if category == 'normal':
             # prompt user about normal function 
@@ -251,7 +209,17 @@ def choose_module(multiple_single, results):
                 get_frequencies(data)
 
     if multiple_single == 'multiple':
-        print("Please implement functions in modules so data can be passed to it")
+
+        category = input("Would category of functions would you like to use [normal, machine-learning]: ").lower()
+
+        if category == 'normal':
+            norm_use = input(f"What normal utilities would you like to use? [plurality, unique, top, frequency]: ").lower()
+
+        if category == 'machine-learning':
+            ml_use = input(f"What ml utilities would you like to use? [risk-score]: ").lower()
+
+            if ml_use == 'risk-score':
+                calculate_risk_score(results)
 
 def start():
     
@@ -338,5 +306,8 @@ def start():
         path = input("Point me to the file: ").strip()
         multi_parser(multiple_single, selected, path)
 
-##
+
+#########
+# BEGIN #
+#########
 start()

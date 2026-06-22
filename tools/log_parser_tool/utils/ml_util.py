@@ -24,7 +24,27 @@ def prepare_feature_matrix(records, scalar=None, fit=True):
 
     return X, scaler, numeric_df.columns
 
+# multi ioc
+def calculate_risk_score(prepped_data):
+    """
+    improve insights from this function
+    """
 
+    # debug
+    # print(f"prepped: \n {prepped_data}")
+
+    f = prepped_data["features"]
+
+    score = 0
+
+    score += f["total_hits"] * 2
+    score += f["total_unique_matches"] * 3
+    score += f["total_ioc_types"] * 5
+
+    # debug
+    print(f"prepped: \n {score}")
+
+    print(min(score, 100))
 
 def predict_plot(logs):
     # preprocess and vectorize
