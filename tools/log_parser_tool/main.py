@@ -59,6 +59,7 @@ def multi_parser(multiple_single, ans, path):
     print(f"feature_names \n: {feature_names}")
     """
     
+    # Evidence Layer
     results = {ioc: [] for ioc in ans}
 
     with open(path, "r") as f:
@@ -80,8 +81,12 @@ def multi_parser(multiple_single, ans, path):
                     })
 
     # print(results)
+
+    # Summary Layer
     results_prepped = multi_extract_features(results)
 
+    # print results_prepped
+    # print(results_prepped)
 
     # progress to choosing function to perform analysis
     choose_module(multiple_single, results_prepped)
@@ -213,7 +218,10 @@ def choose_module(multiple_single, results):
         category = input("Would category of functions would you like to use [normal, machine-learning]: ").lower()
 
         if category == 'normal':
-            norm_use = input(f"What normal utilities would you like to use? [plurality, unique, top, frequency]: ").lower()
+            norm_use = input(f"What normal utilities would you like to use? [analyze]: ").lower()
+
+            if norm_use == 'analyze':
+                analyze_features(results)
 
         if category == 'machine-learning':
             ml_use = input(f"What ml utilities would you like to use? [risk-score]: ").lower()

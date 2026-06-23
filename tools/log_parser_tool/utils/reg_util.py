@@ -1,5 +1,25 @@
 from collections import Counter
 
+####################
+# Helper functions #
+####################
+def _severity(score):
+
+    if score >= 80:
+        return "critical"
+    
+    if score >= 60:
+        return "high"
+    
+    if score >= 30:
+        return "medium"
+    
+    return "low"
+
+
+########################
+# single ioc functions #
+########################
 def plurality(findall):
     """
     calculate the item (eg, ip, hash, etc) that show up most often
@@ -80,3 +100,75 @@ def get_frequencies(data):
 
     if ans == 'wrap':
         print(iocs)
+
+
+##########################
+# multiple ioc functions #
+##########################
+def analyze_features(results):
+    
+    findings = []
+    score = 0
+
+    features = results["features"]
+
+    total_hits = features["total_hits"]
+    total_unique = features["total_unique_matches"]
+    total_lines = features["total_lines_flagged"]
+
+    diversity = (
+        total_unique / total_hits
+        if total_hits
+        else 0
+    )
+
+    density = (
+        total_hits / total_lines
+        if total_lines
+        else 0
+    )
+
+    if total_hits > 500:
+        findings.append(
+            f"High IOC volume detected ({total_hits:,} matches)"
+        )
+        score += 30
+
+    if diversity > 0.4:
+        findings.append(
+            f"High IOC variety ({diversity:,} unique)"
+        )
+        score += 20
+        
+    if density > 1.25:
+        findings.append(
+            f"High IOC variety ({density:.2f} matches per flagged line)"
+        )
+        score += 30
+        
+    for key, value in results.items():
+        if key.endswith("_hits") and not key.startswith("total"):
+            ratio = value / total_hits
+
+            if ratio > 0.75:
+                findings.append(
+                    f"{key.replace('_hits','')} indicators dominate "
+                    f"({ratio:.1%} of detections)"
+                )
+
+    score += min(results["features"]["total_ioc_types"] * 5, 20)
+
+    ans = {
+        "severity": _severity(score),
+        "score": score,
+        "findings": findings,
+        "metrics": {
+            "variety": round(diversity, 3),
+            "density": round(density, 3)
+        }
+
+    }
+
+    for key, value in ans.items():
+        print(f"{key}: {value}")
+        
