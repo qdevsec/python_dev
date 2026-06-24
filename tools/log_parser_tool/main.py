@@ -89,7 +89,7 @@ def multi_parser(multiple_single, ans, path):
     # print(results_prepped)
 
     # progress to choosing function to perform analysis
-    choose_module(multiple_single, results_prepped)
+    choose_module(multiple_single, results_prepped, results)
 
 def parser(multiple_single, ans, path):
 
@@ -157,7 +157,7 @@ def parser(multiple_single, ans, path):
     choose_module(multiple_single, findall_results)
 
 
-def choose_module(multiple_single, results):
+def choose_module(multiple_single, results_prepped, results):
     """
     choice selection path function
     - single ioc
@@ -221,13 +221,16 @@ def choose_module(multiple_single, results):
             norm_use = input(f"What normal utilities would you like to use? [analyze]: ").lower()
 
             if norm_use == 'analyze':
-                analyze_features(results)
+                analyze_features(results_prepped)
 
         if category == 'machine-learning':
-            ml_use = input(f"What ml utilities would you like to use? [risk-score]: ").lower()
+            ml_use = input(f"What ml utilities would you like to use? [risk-score, ioc_distribution]: ").lower()
 
             if ml_use == 'risk-score':
-                calculate_risk_score(results)
+                calculate_risk_score(results_prepped)
+
+            if ml_use == 'ioc_distribution':
+                visualize_ioc_distribution(results)
 
 def start():
     

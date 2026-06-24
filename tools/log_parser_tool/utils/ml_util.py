@@ -9,6 +9,39 @@ import pandas as pd
 import mplcursors
 import numpy as np
 
+
+##########################
+# multiple ioc functions #
+##########################
+
+def visualize_ioc_distribution(results):
+    counts = {
+        ioc_type: sum(
+            len(entry.get("matches", []))
+            for entry in entries
+        )
+        for ioc_type, entries in results.items()
+    }
+
+    plt.figure(figsize=(8,6))
+
+    sns.barplot(
+        x=list(counts.keys()),
+        y=list(counts.values()),
+        palette="mako"
+    )
+
+    plt.title("IOC Type Distribution")
+    plt.xlabel("IOC Type")
+    plt.ylabel("Hits")
+
+    plt.tight_layout()
+    plt.show()
+
+
+########################
+# single ioc functions #
+########################
 # takes features dictionaries (records) and return clean matrix
 def prepare_feature_matrix(records, scalar=None, fit=True):
     df = pd.DataFrame(records).fillna(0)
@@ -24,7 +57,7 @@ def prepare_feature_matrix(records, scalar=None, fit=True):
 
     return X, scaler, numeric_df.columns
 
-# multi ioc
+
 def calculate_risk_score(prepped_data):
     """
     improve insights from this function
