@@ -224,10 +224,10 @@ def choose_module(multiple_single, results_prepped, results):
                 analyze_features(results_prepped)
 
         if category == 'machine-learning':
-            ml_use = input(f"What ml utilities would you like to use? [risk-score, ioc_distribution]: ").lower()
+            ml_use = input(f"What ml utilities would you like to use? [ml_features, ioc_distribution]: ").lower()
 
-            if ml_use == 'risk-score':
-                calculate_risk_score(results_prepped)
+            if ml_use == 'ml_features':
+                multi_ioc_features(results_prepped)
 
             if ml_use == 'ioc_distribution':
                 visualize_ioc_distribution(results)

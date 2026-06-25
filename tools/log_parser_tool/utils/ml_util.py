@@ -2,6 +2,7 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import IsolationForest
+from pyod.models.iforest import IForest
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -13,6 +14,76 @@ import numpy as np
 ##########################
 # multiple ioc functions #
 ##########################
+
+def multi_ioc_features(results_prepped):
+    """
+    get generated ml features from:
+
+        features["total_ioc_types"],
+        features["total_hits"],
+        features["total_unique_matches"],
+        features["total_lines_flagged"],
+        features["mean_hits_per_type"],
+        features["max_hits_per_type"],
+        features["std_hits_per_type"],
+        features["mean_unique_per_type"],
+        features["max_unique_per_type"],
+        features["std_unique_per_type"],
+        features["density"],
+        features["uniqueness_ratio"]
+    """
+    features = results_prepped.get("features", {})
+    ioc_stats = results_prepped.get("ioc_stats", {})
+
+    total_hits = features.get("total_hits", 0)
+    total_unique = features.get("total_unique_matches", 0)
+    total_lines = features.get("total_lines_flagged", 0)
+
+    hits_by_type = []
+    unique_by_type = []
+
+    for ioc_type, stats in ioc_stats.items():
+        hits_by_type.append(stats.get("hits", 0))
+        unique_by_type.append(stats.get("unique", 0))
+
+    ml_features = {
+
+        # Base counts
+        "total_ioc_types": len(ioc_stats),
+        "total_hits": total_hits,
+        "total_unique_matches": total_unique,
+        "total_lines_flagged": total_lines,
+
+        # IOC distribution
+        "mean_hits_per_type": np.mean(hits_by_type) if hits_by_type else 0,
+        "max_hits_per_type": max(hits_by_type) if hits_by_type else 0,
+        "std_hits_per_type": np.std(hits_by_type) if hits_by_type else 0,
+
+        "mean_unique_per_type": np.mean(unique_by_type) if unique_by_type else 0,
+        "max_unique_per_type": max(unique_by_type) if unique_by_type else 0,
+        "std_unique_per_type": np.std(unique_by_type) if unique_by_type else 0,
+
+        # Derived features
+        "density": (
+            total_hits / total_lines
+            if total_lines > 0
+            else 0
+        ),
+
+        "uniqueness_ratio": (
+            total_unique / total_hits
+            if total_hits > 0
+            else 0
+        )
+    }
+
+    print("\n")
+    print("#########################")
+
+    for key, value in ml_features.items():
+        print(f"{key}: {value}")
+        
+    print("######################### \n")
 
 def visualize_ioc_distribution(results):
     counts = {
