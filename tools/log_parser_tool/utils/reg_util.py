@@ -105,6 +105,31 @@ def get_frequencies(data):
 ##########################
 # multiple ioc functions #
 ##########################
+def calculate_ioc_percentages(results_prepped):
+    total_hits = results_prepped["features"].get("total_hits", 0)
+
+    percentages = {}
+
+    if total_hits == 0:
+        return percentages
+    
+    for ioc_type, stats in results_prepped["ioc_stats"].items():
+        hits = stats.get("hits", 0)
+
+        percentages[ioc_type] = {
+            "hits": hits,
+            "unique": stats.get("unique", 0),
+            "percent_of_hits": f'{round((hits / total_hits) * 100, 2)}%'
+        }
+
+    print("\n")
+    print("#########################")
+
+    for key, value in percentages.items():
+        print(f"{key}: {value}")
+        
+    print("######################### \n")   
+
 def analyze_features(results):
     
     findings = []

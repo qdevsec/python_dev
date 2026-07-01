@@ -218,10 +218,14 @@ def choose_module(multiple_single, results_prepped, results):
         category = input("Would category of functions would you like to use [normal, machine-learning]: ").lower()
 
         if category == 'normal':
-            norm_use = input(f"What normal utilities would you like to use? [analyze]: ").lower()
+            norm_use = input(f"What normal utilities would you like to use? [analyze, ioc_percent]: ").lower()
 
             if norm_use == 'analyze':
                 analyze_features(results_prepped)
+
+            if norm_use == 'ioc_percent':
+                calculate_ioc_percentages(results_prepped)
+
 
         if category == 'machine-learning':
             ml_use = input(f"What ml utilities would you like to use? [ml_features, ioc_distribution]: ").lower()
