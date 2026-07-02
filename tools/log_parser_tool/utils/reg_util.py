@@ -1,4 +1,5 @@
 from collections import Counter
+from pprint import pprint
 
 ####################
 # Helper functions #
@@ -105,6 +106,40 @@ def get_frequencies(data):
 ##########################
 # multiple ioc functions #
 ##########################
+def summarize_results(data):
+    """
+    can be used with results or results_prepped
+    """
+
+    print("....Generating summary....\n")
+    summary = {
+        "ioc_types": {},
+        "totals": {
+            "hits": 0,
+            "unique": 0,
+            "lines_flagged": 0,
+            "ioc_types": 0
+        }
+    }
+
+    if "features" in data and "ioc_stats" in data:
+
+        for ioc, stats in data["ioc_stats"].items():
+            summary["ioc_types"][ioc] = {
+                "hits": stats["hits"],
+                "unique": stats["unique"]
+            }
+
+        summary["totals"]["hits"] = data["features"]["total_hits"]
+        summary["totals"]["unique"] = data["features"]["total_unique_matches"]
+        summary["totals"]["lines_flagged"] = data["features"]["total_lines_flagged"]
+        summary["totals"]["ioc_types"] = data["features"]["total_ioc_types"]
+
+        # return summary      
+
+    pprint(summary)
+
+
 def calculate_ioc_percentages(results_prepped):
     total_hits = results_prepped["features"].get("total_hits", 0)
 
