@@ -106,6 +106,55 @@ def get_frequencies(data):
 ##########################
 # multiple ioc functions #
 ##########################
+def summarize_results_norm(data):
+    """
+    summarize IOC extraction results
+    """
+    summary = {
+        "total_ioc_types": len(data),
+        "total_hits": 0,
+        "total_unique_matches": 0,
+        "total_lines_flagged": 0,
+        "ioc_stats": {}
+    }
+
+    flagged_lines = set()
+    unique_matches = set()
+
+    for ioc_type, entries in data.items():
+
+        hits = 0
+        unique = set()
+        lines = set()
+
+        for entry in entries:
+
+            matches = entry.get("matches", [])
+            line = entry.get("line")
+
+            hits += len(matches)
+
+            unique.update(matches)
+
+            if line is not None:
+                lines.add(line)
+                flagged_lines.add(line)
+
+        summary["ioc_stats"][ioc_type] = {
+            "hits": hits,
+            "unique": len(unique),
+            "lines": len(lines)
+        }
+
+        summary["total_hits"] += hits
+        unique_matches.update(unique)
+
+    summary["total_unique_matches"] = len(unique_matches)
+    summary["total_lines_flagged"] = len(flagged_lines)
+
+    pprint(summary)
+
+
 def summarize_results(data):
     """
     can be used with results or results_prepped

@@ -218,7 +218,7 @@ def choose_module(multiple_single, results_prepped, results):
         category = input("Would category of functions would you like to use [normal, machine-learning]: ").lower()
 
         if category == 'normal':
-            norm_use = input(f"What normal utilities would you like to use? [analyze, ioc_percent, summarize]: ").lower()
+            norm_use = input(f"What normal utilities would you like to use? [analyze, ioc_percent, norm-sum, meta-sum]: ").lower()
 
             if norm_use == 'analyze':
                 analyze_features(results_prepped)
@@ -226,8 +226,11 @@ def choose_module(multiple_single, results_prepped, results):
             if norm_use == 'ioc_percent':
                 calculate_ioc_percentages(results_prepped)
 
-            if norm_use == 'summarize':
+            if norm_use == 'meta-sum':
                 summarize_results(results_prepped)
+
+            if norm_use == 'norm-sum':
+                summarize_results_norm(results)
 
 
         if category == 'machine-learning':
