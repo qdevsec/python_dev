@@ -5,15 +5,54 @@ from sklearn.ensemble import IsolationForest
 from pyod.models.iforest import IForest
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
+from pprint import pprint
 import seaborn as sns
 import pandas as pd
 import mplcursors
 import numpy as np
 
 
+
 ##########################
 # multiple ioc functions #
 ##########################
+def multiple_score_results(results_prepped):
+    f = results_prepped["features"]
+
+    score = min(
+        int(
+            f["total_hits"] * 0.05 +
+            f["total_ioc_types"] * 10 +
+            f["total_unique_matches"] * 0.1
+
+        ),
+        100
+    )
+    # print(round(score, 2))
+
+    severity = (
+        "Critical" if score >= 80 else
+        "High" if score >= 60 else
+        "Moderate" if score >= 40 else
+        "Low" if score >= 20 else
+        "Minimal"
+    )
+
+    ans = {
+        "score": score,
+        "severity": severity,
+        "summary": f"{severity} IOC activity.",
+        "reasons": [
+            f'{f["total_hits"]} IOC matches',
+            f'{f["total_unique_matches"]} unique indicators',
+            f'{f["total_ioc_types"]} IOC types'
+        ]
+    }
+
+    print("\n")
+    print("#########################")
+    pprint(ans)
+
 
 def multi_ioc_features(results_prepped):
     """
