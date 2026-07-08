@@ -79,6 +79,45 @@ def generate_keys():
 
     return public_key, private_key
 
+# classical cipher - substitution
+# improves on Caesar cipher by using multiple shifting values
+def encrypt_vigenere(text, key):
+    """
+    takes plaintext and key (alphabetic)
+    returns ciphertext
+
+    Eg
+    text = "attack at dawn"
+    key = lemon
+    """
+    
+    key = "".join(i.upper() for i in key if i.isalpha())
+
+    if not key:
+        raise ValueError("Key must contain at least one alphabetic character.")
+    
+    result = []
+
+    key_index = 0
+
+    for char in text:
+        if char.isalpha():
+            shift = ord(key[key_index % len(key)]) - ord("A")
+
+            if char.isupper():
+                base = ord("A")
+            else:
+                base = ord("a")
+
+            encrypted = chr((ord(char) - base + shift) % 26 + base)
+            result.append(encrypted)
+
+            key_index += 1
+        else:
+            result.append(char)
+    
+    print("".join(result))
+
 # asymmetric
 def rsa_encrypt(message):
 

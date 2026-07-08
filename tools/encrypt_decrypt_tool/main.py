@@ -1,6 +1,6 @@
 import ast
 from util.decrypter_util import decrypt_rsa, aes_decryption, xor_decrypt, caesar_decrypt
-from util.encrypter_util import rsa_encrypt, aes_encrypt, xor_encrypt, caesar_encrypt
+from util.encrypter_util import rsa_encrypt, aes_encrypt, xor_encrypt, caesar_encrypt, encrypt_vigenere
 
 """
 for users who prefer cli
@@ -11,7 +11,7 @@ def selector(answer):
     # Encryption
     if answer == "encrypt":
         response = str.lower(input("cool we're encrypting today, here are the options \n" \
-                                "[rsa, aes, xor, caesar] "))
+                                "[rsa, aes, xor, caesar, vigenere] "))
         
         if response == 'rsa':
             message = input("Please provide the message you want to encrypt: ")
@@ -34,6 +34,12 @@ def selector(answer):
             text = input("Please provide the message you want to encrypt: ")
             shift = input("Please provide the shift right number: ")
             caesar_encrypt(text, int(shift))
+            retry()
+
+        if response == 'vigenere':
+            text = input("Please provide the message you want to encrypt: ")
+            key = input("Please provide key: ")
+            encrypt_vigenere(text, key)
             retry()
 
     # Decryption
@@ -85,3 +91,4 @@ def start():
 
 ## Begin
 start()
+
