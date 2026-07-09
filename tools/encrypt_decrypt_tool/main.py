@@ -1,5 +1,5 @@
 import ast
-from util.decrypter_util import decrypt_rsa, aes_decryption, xor_decrypt, caesar_decrypt
+from util.decrypter_util import decrypt_rsa, aes_decryption, xor_decrypt, caesar_decrypt, decrypt_vigenere
 from util.encrypter_util import rsa_encrypt, aes_encrypt, xor_encrypt, caesar_encrypt, encrypt_vigenere
 
 """
@@ -45,7 +45,7 @@ def selector(answer):
     # Decryption
     if answer == "decrypt":
         response = str.lower(input("cool we're decrypting today, here are the options: \n" \
-                                "[rsa, aes, xor, caesar] "))
+                                "[rsa, aes, xor, caesar, vigenere] "))
         
         if response == 'rsa':
             cipher = ast.literal_eval(input("please provide the cipher [list]: "))
@@ -65,6 +65,12 @@ def selector(answer):
             message = input("Please provide the message you want to decrypt: ")
             key = input("Please provide the key: ")
             xor_decrypt(message, key)
+            retry()
+
+        if response == 'vigenere':
+            ciphertext = input("Please provide the message you want to decrypt: ")
+            key = input("Please provide the key: ")
+            decrypt_vigenere(ciphertext, key)
             retry()
 
         if response == 'caesar':

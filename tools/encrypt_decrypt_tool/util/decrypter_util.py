@@ -59,17 +59,27 @@ def aes_decryption(ciphertext: bytes, key: bytes, nonce: bytes, tag: bytes) -> s
 
     return res
 
-# deprecated
-# def aes_decrypt(ciphertext, key, iv):
-#     cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
-#     decryptor = cipher.decryptor()
+def decrypt_vigenere(ciphertext, key):
+    """
+    takes ciphertext and key 
+    returns decrypted plaintext
+    """
+    plaintext = []
+    key = key.upper()
+    key_index = 0
 
-#     padded_data = decryptor.update(ciphertext) + decryptor.finalize()
+    for char in ciphertext:
+        if char.isalpha():
+            shift = ord(key[key_index % len(key)]) - ord('A')
+            base = ord('A') if char.isupper() else ord('a')
+            decrypted_char = chr((ord(char) - base - shift) % 26 + base)
+            plaintext.append(decrypted_char)
 
-#     unpadder = PKCS7(128).unpadder()
-#     data = unpadder.update(padded_data) + unpadder.finalize()
-
-    # return data
+            key_index += 1
+        else:
+            plaintext.append(char)
+    
+    print(''.join(plaintext))
 
 def xor_decrypt(encoded_text: str, key: str) -> str:
     encrypted = base64.b64decode(encoded_text.encode())
