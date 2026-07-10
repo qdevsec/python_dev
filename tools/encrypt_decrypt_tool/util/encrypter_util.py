@@ -118,6 +118,8 @@ def encrypt_vigenere(text, key):
     
     print("".join(result))
 
+    return "".join(result)
+
 # asymmetric
 def rsa_encrypt(message):
 

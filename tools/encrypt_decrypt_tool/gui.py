@@ -1,6 +1,6 @@
 import tkinter as tk
-from util.decrypter_util import decrypt_rsa, aes_decryption, xor_decrypt, caesar_decrypt
-from util.encrypter_util import rsa_encrypt, aes_encrypt, xor_encrypt, caesar_encrypt
+from util.decrypter_util import decrypt_rsa, aes_decryption, xor_decrypt, caesar_decrypt, decrypt_vigenere
+from util.encrypter_util import rsa_encrypt, aes_encrypt, xor_encrypt, caesar_encrypt, encrypt_vigenere
 
 """
 implement UI feature
@@ -35,6 +35,16 @@ REGISTRY_ALGORITHMS = {
         "decrypt": {
             "func": xor_decrypt,
             "params": ["encoded_text", "key"]
+        }  
+    },
+    "VIGENERE": {
+        "encrypt": {
+            "func": encrypt_vigenere,
+            "params": ["text", "key"]
+        },
+        "decrypt": {
+            "func": decrypt_vigenere,
+            "params": ["ciphertext", "key"]
         }  
     },
     "CAESAR": {
@@ -144,7 +154,7 @@ input_box.pack()
 # Instruction text area
 # height is lines, width is characters
 ins_text_area = tk.Text(root, height=16, width=70, wrap="word")
-ins_text_area.insert(1.0, "Usage: \n" \
+ins_text_area.insert(1.0, "Usage (may need to scroll to see all): \n" \
                           "RSA encrypt: paste message to be encrypted in input box \n" \
                           "RSA decrypt: provide cipher [list], provide cipher [tuple] \n" \
                           "------ \n"\
@@ -153,6 +163,9 @@ ins_text_area.insert(1.0, "Usage: \n" \
                           "------ \n" \
                           "XOR encrypt: paste message and key: 'Hello, world' 'secret' \n" \
                           "XOR decrypt: paste info separated by space example: '<encrypted>' '<key>' \n" \
+                          "------ \n" \
+                          "VIGENERE encrypt: paste message and key: 'Rise at Dawn' 'keylime' \n" \
+                          "VIGENERE decrypt: paste info separated by space example: '<encrypted>' '<key>' \n" \
                           "------ \n" \
                           "caesar encrypt: paste message in the input box: '<message>' 'shift right #' \n" \
                           "caesar decrypt: provide message and shift left #")

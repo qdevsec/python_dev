@@ -81,6 +81,8 @@ def decrypt_vigenere(ciphertext, key):
     
     print(''.join(plaintext))
 
+    return ''.join(plaintext)
+
 def xor_decrypt(encoded_text: str, key: str) -> str:
     encrypted = base64.b64decode(encoded_text.encode())
     decrypted = xor_bytes(encrypted, key.encode())
